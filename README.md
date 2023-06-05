@@ -1,2 +1,2 @@
 # HateScan
-#1237 data science project
+#1237 Data Science Project
