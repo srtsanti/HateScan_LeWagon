@@ -28,3 +28,9 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+<<<<<<< HEAD
+=======
+
+.env
+.streamlit
+>>>>>>> ef888a9230fdbdd61f7aaa7d19405aa915358a36
