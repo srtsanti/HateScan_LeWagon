@@ -9,7 +9,7 @@ def preprocessing(sentence):
     # Basic cleaning
     sentence = sentence.strip() ## remove whitespaces
     sentence = sentence.lower() ## lowercase 
-    sentence = ''.join(char for char in sentence if char.isalpha()) ## stay with letter
+    sentence = ''.join(char for char in sentence if not char.isdigit()) ## stay with letter
     # Advanced cleaning
     for punctuation in string.punctuation:
         sentence = sentence.replace(punctuation, '') ## remove punctuation
