@@ -1,26 +1,45 @@
 import numpy as np
 import pandas as pd
 from hatescan.ml_logic.data import clean_data
-from hatescan.ml_logic.preprocessor import preprocessing, vectorizer
+from hatescan.ml_logic.preprocessor import preprocessing, embedding, tokenizer, vectorizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.utils import to_categorical
+from hatescan.ml_logic.model import initialize_model, compile_model, train_model
 
 
+#note: baseline model
+baseline_model = 23/26
+
+#clean dataset
 df = clean_data()
-
 df['Cleaned_text'] = df['TweetText'].apply(preprocessing)
+
+#train X
+X_train = tokenizer(df)
+
+#vectorize words in sentence
+word2vec = vectorizer(X_train)
+
+# Embed the training and test sentences
+X_train_embed = embedding(word2vec, X_train)
+
+# Pad the training and test embedded sentences
+X_train_pad = pad_sequences(X_train_embed, dtype='float32', padding='post', maxlen=200)
+
+#define y
 y = df[['HateLabel']]
+y_cat = to_categorical(y)
 
-df_vectorized = vectorizer(df)
-df_vectorized['HateLabel'] = y
+#initiate model
+model = initialize_model()
 
-split_ratio: float = 0.2
-# Create (X_train_processed, y_train, X_val_processed, y_val)
-train_length = int(len(df_vectorized)*(1-split_ratio))
+#compile model
+model = compile_model(model=model, learning_rate=0.01)
 
-data_processed_train = df_vectorized.iloc[:train_length, :].sample(frac=1).to_numpy()
-data_processed_val = df_vectorized.iloc[train_length:, :].sample(frac=1).to_numpy()
-
-X_train_processed = data_processed_train[:, :-1]
-y_train = data_processed_train[:, -1]
-
-X_val_processed = data_processed_val[:, :-1]
-y_val = data_processed_val[:, -1]
+#train model
+history = train_model(model=model,
+        X_train=X_train_pad,
+        y_train=y_cat,
+        batch_size=32,
+        patience=2,
+        validation_split=0.2)
