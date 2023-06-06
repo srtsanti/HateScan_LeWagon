@@ -1,66 +1,79 @@
 # Import modules
 import numpy as np
 
-from tensorflow import keras
+# Import initialize model
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras import layers
+from tensorflow.keras.callbacks import EarlyStopping
+
 
 from tensorflow.keras.layers import Embedding, Bidirectional, LSTM, Dense, Dropout
-from keras import Model, Sequential, layers, regularizers, optimizers
+from tensorflow.keras.models import Sequential, layers, regularizers, optimizers
+
 
 
 
 # Initialize the model
-def initialize_model(input_shape: tuple) -> Model:
-
-    model = Sequential(shape=input_shape)
-    model.add(layers.Input(shape=input_shape))
-    model.add(layers.B )
-
-
-    encoder,
-    tf.keras.layers.Embedding(len(encoder.get_vocabulary()), 64, mask_zero=True),
-    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64,  return_sequences=True)),
-    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),
-    tf.keras.layers.Dense(64, activation='relu'),
-    tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Dense(1, activation)
-    ])
-    return model
-
-
-def initialize_model(input_shape: tuple) -> Model:
-    """
-    Initialize the Neural Network with random weights
-    """
-    reg = regularizers.l1_l2(l2=0.005)
+def initialize_model():
 
     model = Sequential()
-    model.add(layers.Input(shape=input_shape))
-    model.add(layers.Dense(100, activation="relu", kernel_regularizer=reg))
-    model.add(layers.BatchNormalization(momentum=0.9))
-    model.add(layers.Dropout(rate=0.1))
-    model.add(layers.Dense(50, activation="relu"))
-    model.add(layers.BatchNormalization(momentum=0.9))  # use momentum=0 to only use statistic of the last seen minibatch in inference mode ("short memory"). Use 1 to average statistics of all seen batch during training histories.
-    model.add(layers.Dropout(rate=0.1))
-    model.add(layers.Dense(1, activation="linear"))
-
-    print("✅ Model initialized")
+    model.add(Bidirectional(LSTM(64,  return_sequences=True)))
+    model.add(Bidirectional(LSTM(32)))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(3, activation='softmax'))
 
     return model
 
 # Compiling the model
-def compile_model():
-    model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-              optimizer=tf.keras.optimizers.Adam(1e-4),
-              metrics=['accuracy'])
+def compile_model(model):
+
+    # we can add the optimizer=Adam(lr=0.5)) # vhigh lr so we can converge a little with such a small dataset
+
+    model.compile(loss='categorical_crossentropy', optimizers='adam', metrics=['accuracy'])
+
+    # Example compile
+    # model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+    #           optimizer=tf.keras.optimizers.Adam(1e-4),
+    #           metrics=['accuracy'])
 
     return model
 
 # Fitting the model
-def fit_model():
-    history = model.fit(train_dataset, epochs=10,
-                    validation_data=test_dataset,
-                    validation_steps=30)
+def train_model(
+
+
+    model.fit(X_train, y_train,
+          epochs=20,
+          batch_size=32,
+          validation_split=0.3,
+          callbacks=[es]
+
+    es = EarlyStopping(
+        monitor="val_loss",
+        patience=5,
+        restore_best_weights=True,
+        verbose=1
+    )
+
+    es = EarlyStopping(patience=5, restore_best_weights=True)
+
+
+    history = model.fit(
+        X,
+        y,
+        validation_data=validation_data,
+        validation_split=validation_split,
+        epochs=100,
+        batch_size=batch_size,
+        callbacks=[es],
+        verbose=0
+    )
+
+    print(f"✅ Model trained on {len(X)} rows with min val MAE: {round(np.min(history.history['val_mae']), 2)}")
+
+    return model, history
 
 # Evaluating the model
 def evaluate_model():
