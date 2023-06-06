@@ -12,7 +12,9 @@ def preprocessing(sentence):
     sentence = sentence.strip() ## remove whitespaces
     sentence = sentence.replace('’', '')
     sentence = sentence.lower() ## lowercase
-    sentence = ''.join(char for char in sentence if not char.isdigit()) ## stay with letter
+    sentence = ''.join(char for char in sentence if char.isalpha() or char == " ") ## stay with letter
+    ' '.join([ word for word in sentence.split() if not word.startswith('https') ]) #delete links
+
     # Advanced cleaning
     for punctuation in string.punctuation:
         sentence = sentence.replace(punctuation, '') ## remove punctuation
