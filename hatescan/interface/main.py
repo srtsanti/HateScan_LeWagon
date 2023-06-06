@@ -5,6 +5,7 @@ from hatescan.ml_logic.preprocessor import preprocessing, embedding, tokenizer, 
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
 from hatescan.ml_logic.model import initialize_model, compile_model, train_model
+from hatescan.ml_logic.registry import save_model
 
 
 #note: baseline model
@@ -43,3 +44,6 @@ history = train_model(model=model,
         batch_size=32,
         patience=2,
         validation_split=0.2)
+
+save_model(model=model)
+
