@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from hatescan.ml_logic.registry import load_model
 from hatescan.ml_logic.preprocessor import preprocessing, embedding, tokenizer, vectorizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from hatescan.interface.main import pred
 
 
 app = FastAPI()

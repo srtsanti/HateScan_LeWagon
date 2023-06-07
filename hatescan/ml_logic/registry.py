@@ -12,7 +12,6 @@ from mlflow.tracking import MlflowClient
 from hatescan.params_hatescan import *
 
 
-
 def save_model(model: keras.Model = None) -> None:
     """
     Persist trained model locally on the hard drive at f"{LOCAL_REGISTRY_PATH}/models/{timestamp}.h5"
@@ -25,19 +24,21 @@ def save_model(model: keras.Model = None) -> None:
     # Save model locally
     model_path = os.path.join(LOCAL_REGISTRY_PATH, "models", f"{timestamp}.h5")
     model.save(model_path)
+    
+    print("✅ Model saved locally")
+    
     if MODEL_TARGET == "gcs":
-    # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
+        # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
 
-    model_filename = model_path.split("/")[-1] # e.g. "20230208-161047.h5" for instance
-    client = storage.Client()
-    bucket = client.bucket(BUCKET_NAME)
-    blob = bucket.blob(f"models/{model_filename}")
-    blob.upload_from_filename(model_path)
+        model_filename = model_path.split("/")[-1] # e.g. "20230208-161047.h5" for instance
+        client = storage.Client()
+        bucket = client.bucket(BUCKET_NAME)
+        blob = bucket.blob(f"models/{model_filename}")
+        blob.upload_from_filename(model_path)
 
-    print("✅ Model saved to GCS")
+        print("✅ Model saved to GCS")
 
-    return None
-
+        return None
 
 def load_model() -> keras.Model:
     """
@@ -90,5 +91,3 @@ def load_model() -> keras.Model:
             print(f"\n❌ No model found in GCS bucket {BUCKET_NAME}")
 
             return None
-   
-    
