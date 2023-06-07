@@ -5,6 +5,8 @@ from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from gensim.models import Word2Vec
+from tensorflow.keras.preprocessing.text import Tokenizer
+
 import numpy as np
 
 def preprocessing(sentence):
@@ -19,7 +21,7 @@ def preprocessing(sentence):
     for punctuation in string.punctuation:
         sentence = sentence.replace(punctuation, '') ## remove punctuation
 
-    tokenized_sentence = word_tokenize(sentence) ## tokenize
+    tokenized_sentence = word_tokenize(sentence) ## split sentence into list
     stop_words = set(stopwords.words('english')) ## define stopwords
 
     tokenized_sentence_cleaned = [ w for w in tokenized_sentence if not w in stop_words] ## remove stopwords
@@ -28,29 +30,28 @@ def preprocessing(sentence):
     cleaned_text = ' '.join(word for word in noun_lemmatized)
     return cleaned_text
 
-def tokenizer(df):
-    X_train = [text_to_word_sequence(_) for _ in df["Cleaned_text"]]
-    return X_train
+def tokenizer(X):
+    tokenizer = Tokenizer()
+    tokenizer.fit_on_texts(X)
+    X_token = tokenizer.texts_to_sequences(X)
+    return X_token
 
-def vectorizer(X_train):
-    word2vec = Word2Vec(sentences=X_train, vector_size=100, window=3)
-    return word2vec
 
 # Function to convert a sentence (list of words) into a matrix representing the words in the embedding space
-def embed_sentence(word2vec, sentence):
+'''def embed_sentence(word2vec, sentence):
     embedded_sentence = []
     for word in sentence:
         if word in word2vec.wv:
             embedded_sentence.append(word2vec.wv[word])
 
-    return np.array(embedded_sentence)
+    return np.array(embedded_sentence)'''
 
 # Function that converts a list of sentences into a list of matrices
-def embedding(word2vec, sentences):
+'''def embedding(word2vec, sentences):
     embed = []
 
     for sentence in sentences:
         embedded_sentence = embed_sentence(word2vec, sentence)
         embed.append(embedded_sentence)
 
-    return embed
+    return embed'''
