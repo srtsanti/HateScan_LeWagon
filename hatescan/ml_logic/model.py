@@ -8,17 +8,18 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.layers import Embedding, Bidirectional, LSTM, Dense, Dropout, Masking
 from tensorflow.keras.models import Sequential, layers, regularizers, optimizers
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
+from tensorflow.keras.preprocessing.text import text_to_word_sequence
 
 #import and initialize model
 
 def initialize_model(vocab_size, embedding_dimension):
-
+    l2 = regularizers.l2() #play with hyperparams
     model = Sequential()
     model.add(Embedding(input_dim=vocab_size + 1, output_dim=embedding_dimension, mask_zero=True))
     model.add(layers.Masking())
     model.add(Bidirectional(LSTM(64,  return_sequences=True)))
     model.add(Bidirectional(LSTM(32)))
-    model.add(Dense(64, activation='relu'))
+    model.add(Dense(64, activation='relu', kernel_reguralizer=l2)) #add l2 regula
     model.add(Dropout(0.5))
     model.add(Dense(3, activation='softmax'))
 

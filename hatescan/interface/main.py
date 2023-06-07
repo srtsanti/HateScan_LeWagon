@@ -42,12 +42,13 @@ model = initialize_model(vocab_size, embedding_dimension)
 model = compile_model(model=model, learning_rate=0.01)
 
 #train model
-history = train_model(model=model,
+history, model = train_model(model=model,
         X_train=X_train_pad,
         y_train=y_train,
         batch_size=32,
         patience=2,
         validation_split=0.2)
+
 
 #predict y
 y_pred = model.predict(X_test_pad)
