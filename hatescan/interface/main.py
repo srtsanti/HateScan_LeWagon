@@ -1,76 +1,59 @@
 import numpy as np
 import pandas as pd
 from hatescan.ml_logic.data import clean_data
-from hatescan.ml_logic.preprocessor import preprocessing, embedding, tokenizer, vectorizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.utils import to_categorical
+from hatescan.ml_logic.preprocessor import preprocessing, tokenizer
 from hatescan.ml_logic.model import initialize_model, compile_model, train_model
 from hatescan.ml_logic.registry import save_model, load_model
 
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.utils import to_categorical
 
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
 
-#note: baseline model
+#baseline model
 baseline_model = 23/26
 
-# def preprocess():
-#     #clean dataset
-#     df = clean_data()
-#     df['Cleaned_text'] = df['TweetText'].apply(preprocessing)
+#get + preproc dataset
+df = clean_data()
+df['Cleaned_text'] = df['TweetText'].apply(preprocessing)
 
-#     #train X
-#     X_train = tokenizer(df)
+X = [text_to_word_sequence(_) for _ in df["Cleaned_text"]]
+y = df[['HateLabel']]
+y_cat = to_categorical(y)
+X_train, X_test, y_train, y_test = train_test_split(X, y_cat, test_size=0.2, random_state=42)
 
-#     #vectorize words in sentence
-#     word2vec = vectorizer(X_train)
+#Tokenize X
+X_train_token = tokenizer(X_train)
+X_test_token = tokenizer(X_test)
 
-#     # Embed the training and test sentences
-#     X_train_embed = embedding(word2vec, X_train)
+#Pad X
+X_train_pad = pad_sequences(X_train_token, dtype='float32', padding='post')
+X_test_pad = pad_sequences(X_test_token, dtype='float32', padding='post')
 
-#     # Pad the training and test embedded sentences
-#     X_train_pad = pad_sequences(X_train_embed, dtype='float32', padding='post', maxlen=200)
+#define params
+vocab_size = len(tokenizer.word_index) #how many words in sentences
+embedding_dimension = 100
 
-#     #define y
-#     y = df[['HateLabel']]
-#     y_cat = to_categorical(y)
-    
-#     return X_train_pad, y_cat
-    
-# def train():
-
-#     #initiate model
-#     model = initialize_model()
+#initiate model
+model = initialize_model(vocab_size, embedding_dimension)
 
 #     #compile model
 #     model = compile_model(model=model, learning_rate=0.01)
 
-#     #train model
-#     model, history = train_model(model=model,
-#             X_train=X_train_pad,
-#             y_train=y_cat,
-#             batch_size=32,
-#             patience=2,
-#             validation_split=0.2)
-    
-#     accuracy = np.min(history.history['val_accuracy'])
+#train model
+history, model = train_model(model=model,
+        X_train=X_train_pad,
+        y_train=y_train,
+        batch_size=32,
+        patience=2,
+        validation_split=0.2)
 
-#     save_model(model=model)
-    
-#     return accuracy
 
-#def pred(X_pred):
-    # model = load_model()
-    
-    # #WE run the preprocessor for the x_new to get it preproceed to get prediction
-    # X_processed = preprocessing(X_pred)
-    
-    # y_pred = model.predict(X_processed)
-    # return y_pred
-    
-        
-    
-if __name__ == '__main__':
-    preprocess()
-    train()
-    evaluate()
-    pred()
-    
+#predict y
+y_pred = model.predict(X_test_pad)
+y_pred_classes = np.argmax(y_pred, axis=1)
+y_test_classes = np.argmax(y_test, axis=1)
+
+#print classification report to check how often the most dangerous class was predict correctly
+report = classification_report(y_test_classes, y_pred_classes, target_names=['Class 0', 'Class 1', 'Class 2'])

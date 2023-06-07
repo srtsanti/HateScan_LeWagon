@@ -1,25 +1,25 @@
 # Import modules
 import numpy as np
 
-# Import initialize model
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import Adam
 from tensorflow.keras import layers
+from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping
-
 
 from tensorflow.keras.layers import Embedding, Bidirectional, LSTM, Dense, Dropout, Masking
 from tensorflow.keras.models import Sequential, layers, regularizers, optimizers
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
+from tensorflow.keras.preprocessing.text import text_to_word_sequence
 
+#import and initialize model
 
-def initialize_model():
-
+def initialize_model(vocab_size, embedding_dimension):
+    l2 = regularizers.l2() #play with hyperparams
     model = Sequential()
+    model.add(Embedding(input_dim=vocab_size + 1, output_dim=embedding_dimension, mask_zero=True))
     model.add(layers.Masking())
     model.add(Bidirectional(LSTM(64,  return_sequences=True)))
     model.add(Bidirectional(LSTM(32)))
-    model.add(Dense(64, activation='relu'))
+    model.add(Dense(64, activation='relu', kernel_reguralizer=l2)) #add l2 regula
     model.add(Dropout(0.5))
     model.add(Dense(3, activation='softmax'))
 
@@ -28,9 +28,8 @@ def initialize_model():
 # Compiling the model
 def compile_model(model, learning_rate):
 
-    # we can add the optimizer=Adam(lr=0.5)) # vhigh lr so we can converge a little with such a small dataset
-    #optimizer = optimizers.Adam(learning_rate=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer="adam" , metrics=['accuracy'])
+    optimizer = Adam(learning_rate=learning_rate)
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer , metrics=['accuracy'])
 
     return model
 
@@ -56,10 +55,9 @@ def train_model(
         epochs=100,
         batch_size=batch_size,
         callbacks=[es],
-        verbose=1
+        verbose=1,
+        class_weight = {0: 0.1, 1: 0.2, 2: 10000}
     )
-
-    print(f"✅ Model trained on {len(X_train)} rows with min val accuracy: {round(np.min(history.history['accuracy']), 2)}")
 
     return model, history
 
@@ -93,8 +91,6 @@ def evaluate_model(
 # Making predictions fromt the model
 def model_predict(model,
                   X_new: np.array):
-    # predict on a sample text without padding.
-    #sample_text = ('The movie was not good. The animation and the graphics '
-    #           'were terrible. I would not recommend this movie.')
+
     predictions = model.predict(X_new)
     print(predictions)
