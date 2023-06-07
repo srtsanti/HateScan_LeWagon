@@ -24,15 +24,14 @@ y_cat = to_categorical(y)
 X_train, X_test, y_train, y_test = train_test_split(X, y_cat, test_size=0.2, random_state=42)
 
 #Tokenize X
-X_train_token = tokenizer(X_train)
-X_test_token = tokenizer(X_test)
+X_train_token, vocab_size = tokenizer(X_train)
+X_test_token, _ = tokenizer(X_test)
 
 #Pad X
 X_train_pad = pad_sequences(X_train_token, dtype='float32', padding='post')
 X_test_pad = pad_sequences(X_test_token, dtype='float32', padding='post')
 
 #define params
-vocab_size = len(tokenizer.word_index) #how many words in sentences
 embedding_dimension = 100
 
 #initiate model

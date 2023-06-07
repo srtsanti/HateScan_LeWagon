@@ -32,9 +32,10 @@ def preprocessing(sentence):
 
 def tokenizer(X):
     tokenizer = Tokenizer()
-    tokenizer.fit_on_texts(X)
+    tokenizer.fit_on_texts(X) #will need "toknizer" to defin the vocab size
     X_token = tokenizer.texts_to_sequences(X)
-    return X_token
+    vocab_size = len(tokenizer.word_index)
+    return X_token, vocab_size
 
 
 # Function to convert a sentence (list of words) into a matrix representing the words in the embedding space
