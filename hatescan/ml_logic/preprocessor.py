@@ -6,7 +6,7 @@ from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from gensim.models import Word2Vec
 from tensorflow.keras.preprocessing.text import Tokenizer
-
+import pickle
 import numpy as np
 
 def preprocessing(sentence):
@@ -30,11 +30,25 @@ def preprocessing(sentence):
     cleaned_text = ' '.join(word for word in noun_lemmatized)
     return cleaned_text
 
-def tokenizer(X):
+def X_tokenizer(X):
     tokenizer = Tokenizer()
     tokenizer.fit_on_texts(X)
+    save_tokenizer(tokenizer)
+    vocab_size = len(tokenizer.word_index)
     X_token = tokenizer.texts_to_sequences(X)
-    return X_token
+    return X_token, vocab_size
+
+def save_tokenizer(tokenizer):
+    # saving
+    with open('token_pickle/tokenizer.pickle', 'wb') as handle:
+        pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    
+def load_tokenizer():
+    # loading
+    with open('token_pickle/tokenizer.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
+    return tokenizer
+    
 
 
 # Function to convert a sentence (list of words) into a matrix representing the words in the embedding space

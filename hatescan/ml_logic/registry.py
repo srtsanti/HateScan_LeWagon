@@ -2,13 +2,9 @@ import glob
 import os
 import time
 import pickle
-
 from colorama import Fore, Style
 from tensorflow import keras
 from google.cloud import storage
-
-import mlflow
-from mlflow.tracking import MlflowClient
 from hatescan.params_hatescan import *
 
 
@@ -20,9 +16,8 @@ def save_model(model: keras.Model = None) -> None:
     """
     
     timestamp = time.strftime("%Y%m%d-%H%M%S")
-
     # Save model locally
-    model_path = os.path.join(LOCAL_REGISTRY_PATH, "models", f"{timestamp}.h5")
+    model_path = os.path.join(LOCAL_REGISTRY_PATH, f"{timestamp}.h5")
     model.save(model_path)
     
     print("✅ Model saved locally")
@@ -54,7 +49,7 @@ def load_model() -> keras.Model:
         print(Fore.BLUE + f"\nLoad latest model from local registry..." + Style.RESET_ALL)
 
         # Get the latest model version name by the timestamp on disk
-        local_model_directory = os.path.join(LOCAL_REGISTRY_PATH, "models")
+        local_model_directory = LOCAL_REGISTRY_PATH
         local_model_paths = glob.glob(f"{local_model_directory}/*")
 
         if not local_model_paths:
@@ -70,24 +65,23 @@ def load_model() -> keras.Model:
 
         return latest_model
 
-    elif MODEL_TARGET == "gcs":
-        # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
-        print(Fore.BLUE + f"\nLoad latest model from GCS..." + Style.RESET_ALL)
+    # elif MODEL_TARGET == "gcs":
+    #     # 🎁 We give you this piece of code as a gift. Please read it carefully! Add a breakpoint if needed!
+    #     print(Fore.BLUE + f"\nLoad latest model from GCS..." + Style.RESET_ALL)
 
-        client = storage.Client()
-        blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix="model"))
+    #     client = storage.Client()
+    #     blobs = list(client.get_bucket('hate_scan_srtsanti').list_blobs(prefix="model"))
+        
+    #     try:
+    #         latest_blob = max(blobs, key=lambda x: x.updated)
+    #         latest_model_path_to_save = os.path.join(LOCAL_REGISTRY_PATH, latest_blob.name)
+    #         latest_blob.download_to_filename(latest_model_path_to_save)
+    #         latest_model = keras.models.load_model(latest_model_path_to_save)
 
-        try:
-            latest_blob = max(blobs, key=lambda x: x.updated)
-            latest_model_path_to_save = os.path.join(LOCAL_REGISTRY_PATH, latest_blob.name)
-            latest_blob.download_to_filename(latest_model_path_to_save)
+    #         print("✅ Latest model downloaded from cloud storage")
 
-            latest_model = keras.models.load_model(latest_model_path_to_save)
+    #         return latest_model
+    #     except:
+    #         print(f"\n❌ No model found in GCS bucket {BUCKET_NAME}")
 
-            print("✅ Latest model downloaded from cloud storage")
-
-            return latest_model
-        except:
-            print(f"\n❌ No model found in GCS bucket {BUCKET_NAME}")
-
-            return None
+    #         return None

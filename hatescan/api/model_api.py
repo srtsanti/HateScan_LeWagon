@@ -1,14 +1,16 @@
+import numpy as np
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from hatescan.ml_logic.registry import load_model
-from hatescan.ml_logic.preprocessor import preprocessing, embedding, tokenizer, vectorizer
+from hatescan.ml_logic.preprocessor import preprocessing, X_tokenizer, load_tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from hatescan.interface.main import pred
+from tensorflow.keras.preprocessing.text import text_to_word_sequence
 
 
 app = FastAPI()
 app.state.model = load_model()
+app.state.tokenizer = load_tokenizer()
 
 # Allowing all middleware is optional, but good practice for dev purposes
 app.add_middleware(
@@ -29,22 +31,24 @@ def root():
 def predict(
         tweet: str,  # tweet string
     ):
-    
-    data = {'TweetText': str(tweet)}
-    
-    X_pred = pd.DataFrame(data, index=['TweetText'])
-    
-    X_pred['Cleaned_text'] = X_pred['TweetText'].apply(preprocessing)
-    X_pred_token = tokenizer(X_pred)
-    pred_word2vec = vectorizer(X_pred_token)
-    X_pred_embed = embedding(pred_word2vec, X_pred_token)
-    X_pred_pad = pad_sequences(X_pred_embed, dtype='float32', padding='post', maxlen=200)
 
+    data = {'TweetText': str(tweet)}
+    df = pd.DataFrame(data, index=[0])
+    df['Cleaned_text'] = df['TweetText'].apply(preprocessing)
+
+    X_new = [text_to_word_sequence(_) for _ in df["Cleaned_text"]]
+
+    #Tokenize X
+    loaded_tokenizer = load_tokenizer()
+    X_pred_token= loaded_tokenizer.texts_to_sequences(X_new)
+
+    #Pad X
+    X_pred_pad = pad_sequences(X_pred_token, dtype='float32', padding='post')
     #Traer modelo
     model = app.state.model
     #pred modelo
     y_pred = model.predict(X_pred_pad)
     
-    prediction = {'HateLabel': y_pred[0][0]}
+    prediction = {'HateLabel': int(np.argmax(y_pred))}
     
     return prediction

@@ -1,7 +1,8 @@
 import os
 import numpy as np
 
-LOCAL_REGISTRY_PATH = os.path.join(os.path.expanduser('~'), ".lewagon", "mlops", "training_outputs")
+LOCAL_REGISTRY_PATH = os.environ.get("LOCAL_MODEL_PATH")
+LOCAL_TOKEN_PATH = os.environ.get("LOCAL_TOKEN_PATH")
 
 MODEL_TARGET = os.environ.get("MODEL_TARGET")
 

@@ -1,13 +1,21 @@
 import streamlit as st
 import time
+import requests
 
 st.title('Welcome to the Hater Scan App')
+
+url = st.secrets['key_ap']
 
 st.title("Tweet Box")
 tweet = st.text_area("Enter your tweet:", max_chars=200)
 st.write("Your tweet:")
 st.write(tweet)
 scanner = st.button('Scan tweet')
+
+if scanner:
+    response = requests.get(url, params=tweet)
+    scale = response.json()['HateLabel']
+    st.write("Hate Label Scale:", scale)
 
 def format_hate_scale(value):
     if value == 0:
