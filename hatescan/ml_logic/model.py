@@ -16,9 +16,9 @@ def initialize_model(vocab_size, embedding_dimension, learning_rate):
     model = Sequential()
     model.add(Embedding(input_dim=vocab_size + 1, output_dim=embedding_dimension, mask_zero=True))
     model.add(layers.Masking())
-    model.add(Bidirectional(LSTM(32,  return_sequences=True, kernel_regulizer=l12)))
+    model.add(Bidirectional(LSTM(32,  return_sequences=True, kernel_regularizer=l12)))
     model.add(Bidirectional(LSTM(16)))
-    model.add(Dense(16, activation='relu', kernel_reguralizer=l12))
+    model.add(Dense(16, activation='relu', kernel_regularizer=l12))
     model.add(Dropout(0.5))
     model.add(Dense(3, activation='softmax'))
 

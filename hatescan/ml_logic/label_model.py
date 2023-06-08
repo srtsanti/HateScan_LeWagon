@@ -12,7 +12,7 @@ from tensorflow.keras.preprocessing.text import text_to_word_sequence
 #import, initialize and compile model
 
 def initialize_label_model(vocab_size, embedding_dimension, learning_rate):
-    l12 = regularizers.L1L2() #play with hyperparams
+    l12 = regularizers.L2() #play with hyperparams
     model = Sequential()
     model.add(Embedding(input_dim=vocab_size + 1, output_dim=embedding_dimension, mask_zero=True))
     model.add(layers.Masking())
