@@ -3,7 +3,7 @@ import pandas as pd
 from hatescan.ml_logic.data import clean_data
 from hatescan.ml_logic.preprocessor import preprocessing, X_tokenizer, save_tokenizer, load_tokenizer
 from hatescan.ml_logic.model import initialize_model, compile_model, train_model
-from hatescan.ml_logic.registry import save_model, load_model
+from hatescan.ml_logic.registry import save_model, load_model_hatescale
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
@@ -38,7 +38,7 @@ def main_func():
         #define params
         embedding_dimension = 100
 
-        model = load_model()
+        model = load_model_hatescale()
         
         if model is None:
         #initiate model

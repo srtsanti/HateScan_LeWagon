@@ -3,5 +3,6 @@
 .streamlit
 .python-version
 *.ipynb
-model/
+model_scale/
+model_topic/
 token_pickle/
