@@ -52,7 +52,7 @@ def save_tokenizer(tokenizer):
     
 def load_tokenizer():
     # loading
-    with open('token_pickle/tokenizer.pickle', 'rb') as handle:
+    with open('token_pickle/tokenizer_thurs8.pickle', 'rb') as handle:
         tokenizer = pickle.load(handle)
     return tokenizer
     

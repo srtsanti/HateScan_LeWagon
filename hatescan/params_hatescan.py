@@ -15,3 +15,6 @@ GCR_REGION = os.environ.get("GCR_REGION")
 GCR_MEMORY = os.environ.get("GCR_MEMORY")
 
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
+
+API_TOKEN = os.environ.get("API_TOKEN")
+API_URL = os.environ.get("API_URL")

@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 import requests
+from hatescan.api.roberta_api import roberta_pred, query, return_class
 
 st.title('Welcome to the Hater Scan App')
 
@@ -12,6 +13,10 @@ params = {'tweet' : tweet}
 st.write("Your tweet:")
 st.write(tweet)
 scanner = st.button('Scan tweet')
+
+roberta_scan = st.button('Roberta tweet pred')
+roberta_prediction = roberta_pred(tweet)
+st.write(roberta_prediction)
 
 scale_mapping = {
         0: ("Normal", "🙂"),
