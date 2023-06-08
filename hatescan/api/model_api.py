@@ -51,13 +51,11 @@ def predict(
     
     y_pred_scale = model_scale.predict(X_pred_pad)
     y_pred_topics = model_topic.predict(X_pred_pad)
-    breakpoint()
-    class_labels = ['Class {}'.format(i) for i in range(y_pred_topics.shape[1])]
-    sorted_array = np.sort(np.round(y_pred_topics, decimals=4))[::-1]
-    df_topics = pd.DataFrame(sorted_array, columns=class_labels)
-    df_topics = df_topics.T.reset_index()
-    df_topics.columns = ['Class', 'Value']
+    list_topics = list(np.round(y_pred_topics[0], 3))
+    list_topics = [round(float(each), 3) for each in list_topics]
     
-    prediction = {'HateLabel': int(np.argmax(y_pred_scale))}
+    dict_topics = dict(zip(range(0,5),list_topics))
+    pred_scale = {'HateLabel': int(np.argmax(y_pred_scale))}
     
-    return prediction
+    return {'hate_scale' : pred_scale, 
+            'hate_class': dict_topics}
