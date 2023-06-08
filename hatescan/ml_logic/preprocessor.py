@@ -8,6 +8,13 @@ from gensim.models import Word2Vec
 from tensorflow.keras.preprocessing.text import Tokenizer
 import pickle
 import numpy as np
+import nltk
+
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
 
 def preprocessing(sentence):
     # Basic cleaning

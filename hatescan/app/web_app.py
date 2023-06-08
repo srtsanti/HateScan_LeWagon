@@ -8,12 +8,14 @@ url = st.secrets['key_ap']
 
 st.title("Tweet Box")
 tweet = st.text_area("Enter your tweet:", max_chars=200)
+params = {'tweet' : tweet}
 st.write("Your tweet:")
 st.write(tweet)
 scanner = st.button('Scan tweet')
 
 if scanner:
-    response = requests.get(url, params=tweet)
+    response = requests.get(url, params=params)
+    #st.write(response.json())
     scale = response.json()['HateLabel']
     st.write("Hate Label Scale:", scale)
 

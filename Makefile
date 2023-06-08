@@ -1,5 +1,5 @@
 run_api:
-	uvicorn hatescan.api.model_api:app --reload
+	uvicorn hatescan.api.model_api:app --host 0.0.0.0 --port ${PORT} --reload
 
 run_preprocess:
 	python -c 'from hatescan.interface.main import preprocess; preprocess()'
