@@ -9,6 +9,7 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
 import nltk
 import glob
+import pickle
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')

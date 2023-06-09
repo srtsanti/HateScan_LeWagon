@@ -3,7 +3,7 @@ import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from hatescan.ml_logic.registry import load_model_hatescale, load_model_hatetopic
-from hatescan.ml_logic.preprocessor import preprocessing, X_tokenizer, load_tokenizer_scale_model, load_tokenizer_topic_model
+from hatescan.ml_logic.preprocessor import preprocessing, load_tokenizer_scale_model, load_tokenizer_topic_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from hatescan.api.user_twitter_api import analyse_twitter_profile
@@ -61,8 +61,8 @@ def predict(
 
     #Pred Model Topic
     y_pred_topics = model_topic.predict(X_pred_pad_topic)
-    list_topics = list(np.round(y_pred_topics[0], 3))
-    list_topics = [round(float(each), 3) for each in list_topics]
+    list_topics = list(np.round(y_pred_topics[0], 2))
+    list_topics = [round(float(each), 2) for each in list_topics]
     dict_topics = dict(zip(range(0,5),list_topics))
     
     return {'hate_scale' : pred_scale, 
@@ -76,7 +76,7 @@ def predict(
     #Getting the list of tweets from API Twitter
     list_of_tweets = analyse_twitter_profile(user)
     
-    df = pd.DataFrame(list_of_tweets, columns='TweetText')
+    df = pd.DataFrame(list_of_tweets, columns=['TweetText'])
     
     df['Cleaned_text'] = df['TweetText'].apply(preprocessing)
     
@@ -91,29 +91,24 @@ def predict(
     #Pad X
     X_pred_pad_scale = pad_sequences(X_pred_token_scale, dtype='float32', padding='post')
     X_pred_pad_topic = pad_sequences(X_pred_token_topic, dtype='float32', padding='post')
-        
+    
     #Bring Modelos
     model_scale = app.state.model_1
     model_topic = app.state.model_2
     
     #Pred Model Scale
-    result_list = []
-    for ele in X_pred_pad_scale:
-        result_list.append(model_scale.predict(ele))
+    
+    y_pred_scale = model_scale.predict(X_pred_pad_scale)
+    y_pred_scale = np.argmax(y_pred_scale, axis=1)
     # We need to see what to do as thershold 
-    avg_ypred_scale = np.average(result_list)
-    pred_scale = {'HateLabel': int(np.argmax(avg_ypred_scale))}
+    avg_ypred_scale = np.mean(y_pred_scale)
+    pred_scale = {'HateLabel': int(avg_ypred_scale)}
     
     #Pred Model Topic
-    breakpoint()
-    topic_results = []
-    for ele in X_pred_pad_topic:
-        topic_results.append(model_topic.predict(ele))
-    
-    
-    
-    list_topics = list(np.round(y_pred_topics[0], 3))
-    list_topics = [round(float(each), 3) for each in list_topics]
+    y_pred_topics = model_topic.predict(X_pred_pad_topic)
+    y_pred_topics = np.mean(y_pred_topics, axis=0)
+    list_topics = list(np.round(y_pred_topics, 2))
+    list_topics = [round(float(each), 2) for each in list_topics]
     dict_topics = dict(zip(range(0,5),list_topics))
     
     return {'hate_scale' : pred_scale, 

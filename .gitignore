@@ -4,6 +4,10 @@
 .streamlit
 .python-version
 *.ipynb
+*.h5
+*.pickle
+*.csv
+
 
 model_scale/
 model_topic/

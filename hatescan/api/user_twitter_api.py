@@ -2,6 +2,7 @@ import requests
 
 #with name_of_twitter_account input, get profile card    
 def analyse_twitter_profile(input):    
+    
     url = "https://twitter135.p.rapidapi.com/v2/UserByScreenName/"
     querystring = {"username":input}
     headers = {
@@ -23,8 +24,9 @@ def analyse_twitter_profile(input):
 
     #get list of 10 first tweets
     tweet_list=[]
-    for i in range(0,10):
-        tweet_list.append(response_tweets['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['full_text'])
-        
-    return tweet_list    
-        
+    try:
+        for i in range(0,10):
+            tweet_list.append(response_tweets['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['full_text'])
+    except:
+        print("Twitter account does not have enough publications (min.10).")
+    return tweet_list
