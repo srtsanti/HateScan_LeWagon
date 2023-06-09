@@ -6,7 +6,6 @@ from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from gensim.models import Word2Vec
 from tensorflow.keras.preprocessing.text import Tokenizer
-import pickle
 import numpy as np
 import nltk
 import glob
@@ -38,7 +37,7 @@ def preprocessing(sentence):
     cleaned_text = ' '.join(word for word in noun_lemmatized)
     return cleaned_text
 
-def X_tokenizer(X):
+def tokenizer(X):
     tokenizer = Tokenizer()
     tokenizer.fit_on_texts(X)
     save_tokenizer(tokenizer)
