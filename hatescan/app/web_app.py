@@ -8,7 +8,7 @@ st.title('Welcome to the Hater Scan App')
 url = st.secrets['key_ap']
 
 st.title("Tweet Box")
-tweet = st.text_area("Enter your tweet:", max_chars=200)
+tweet = st.text_area("Enter your tweet:", max_chars=300)
 params = {'tweet' : tweet}
 st.write("Your tweet:")
 st.write(tweet)
