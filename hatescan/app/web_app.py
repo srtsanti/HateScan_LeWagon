@@ -18,11 +18,11 @@ def format_hate_scale(value):
         return "Hate"
     else:
         return str(value)
-    
+
 st.title("Hate Scale")
 hate_scale = st.select_slider("Your tweet is:",
                                   options=[0, 1, 2],
                                   value=0,
                                   format_func=format_hate_scale)
 
-st.write("Your hate scale is :", format_hate_scale(hate_scale))  
+st.write("Your hate scale is :", format_hate_scale(hate_scale))
