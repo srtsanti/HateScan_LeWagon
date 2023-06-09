@@ -36,4 +36,4 @@ def return_class(output):
 def roberta_pred(input_tweet):
     output = query({"inputs": input_tweet})
     result = return_class(output)
-    return result, output
+    return result

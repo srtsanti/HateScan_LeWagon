@@ -14,9 +14,10 @@ st.write("Your tweet:")
 st.write(tweet)
 scanner = st.button('Scan tweet')
 
-roberta_scan = st.button('Roberta tweet pred')
-roberta_prediction = roberta_pred(tweet)
-st.write(roberta_prediction)
+# Getting prediction with roberta API
+# roberta_scan = st.button('Roberta tweet pred')
+# roberta_prediction = roberta_pred(tweet)
+# st.write(roberta_prediction)
 
 scale_mapping = {
         0: ("Normal", "🙂"),
@@ -34,16 +35,17 @@ def format_hate_scale(value):
     else:
         return str(value)
 
+# This is the code for printing the Hate scale
 if scanner:
     response = requests.get(url, params=params)
-    #st.write(response.json())
+    #Connection to model_scale through our API
     scale = response.json()['hate_scale']['HateLabel']
+    #Connection to model_topic through our API
     topics = response.json()['hate_class']
     if scale in scale_mapping:
         label, emoji = scale_mapping[scale]
         st.write("Hate Label Scale:", f"{label} {emoji}")
-        st.write("Hate Level:")
-        
+        st.title("Hate Level:")
         st.select_slider("Your tweet is:",
                                   options=[0, 1, 2],
                                   value=scale,
@@ -51,8 +53,10 @@ if scanner:
     else:
         st.write("Hate Label Scale:", scale)
     
-    st.write("                           ")
-    st.write('Hate topics:')
+    st.markdown("---")
+    
+# This is the code for printing the Hate topics
+    st.title('Hate topics:')
     for key, value in topics.items():
         class_name = ""
         if key == '0':

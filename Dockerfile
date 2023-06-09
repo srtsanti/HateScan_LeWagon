@@ -9,6 +9,7 @@ COPY Makefile Makefile
 COPY hatescan /hatescan
 COPY model_scale /model_scale
 COPY model_topic /model_topic
-COPY token_pickle /token_pickle
+COPY token_pickle_scale /token_pickle_scale
+COPY token_pickle_topic /token_pickle_topic
 
 CMD uvicorn hatescan.api.model_api:app --host 0.0.0.0 --port $PORT

@@ -1,8 +1,11 @@
 # Our additions
 .env
+.env.yaml
 .streamlit
 .python-version
 *.ipynb
+
 model_scale/
 model_topic/
-token_pickle/
+token_pickle_scale/
+token_pickle_topic/
