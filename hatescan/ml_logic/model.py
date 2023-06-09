@@ -5,7 +5,8 @@ from tensorflow.keras import layers
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping
 
-from keras import Model, Sequential, layers, regularizers, optimizers
+from tensorflow.keras.layers import Embedding, Bidirectional, LSTM, Dense, Dropout, Masking
+from tensorflow.keras.models import Sequential, layers, regularizers, optimizers
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 
@@ -14,7 +15,7 @@ from tensorflow.keras.preprocessing.text import text_to_word_sequence
 def initialize_model(vocab_size, embedding_dimension):
     l2 = regularizers.l2() #play with hyperparams
     model = Sequential()
-    model.add(layers.Embedding(input_dim=vocab_size + 1, output_dim=embedding_dimension, mask_zero=True))
+    model.add(Embedding(input_dim=vocab_size + 1, output_dim=embedding_dimension, mask_zero=True))
     model.add(layers.Masking())
     model.add(Bidirectional(LSTM(64,  return_sequences=True)))
     model.add(Bidirectional(LSTM(32)))
