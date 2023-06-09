@@ -49,7 +49,6 @@ history, model = train_model(model=model,
         patience=2,
         validation_split=0.2)
 
-
 #predict y
 y_pred = model.predict(X_test_pad)
 y_pred_classes = np.argmax(y_pred, axis=1)
