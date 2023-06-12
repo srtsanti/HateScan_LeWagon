@@ -70,11 +70,12 @@ def predict(
 
 @app.get("/predict_user")
 def predict(
-        user: str,  # tweet string
+        user: str,
+        n_tweets : int# tweet string
     ):
 
     #Getting the list of tweets from API Twitter
-    list_of_tweets = analyse_twitter_profile(user)
+    list_of_tweets = analyse_twitter_profile(user, n_tweets)
     
     df = pd.DataFrame(list_of_tweets, columns=['TweetText'])
     

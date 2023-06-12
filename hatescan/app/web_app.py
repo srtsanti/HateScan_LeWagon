@@ -73,9 +73,11 @@ url_2 = st.secrets['key_ap_user']
 
 st.title("Twitter User profile")
 user = st.text_area("Enter your user:", max_chars=50)
-params_2 = {'user' : user}
-st.write("Your user:")
-st.write(user)
+n_tweets = st.slider("Select a number between 5 and 50", 5, 50, 15)
+
+params_2 = {'user' : user, 
+            'n_tweets': n_tweets }
+
 scanner_user = st.button('Scan user')
 
 # This is the code for printing the Hate scale
