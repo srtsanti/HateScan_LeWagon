@@ -1,6 +1,10 @@
 import streamlit as st
 import time
 import requests
+from google.oauth2 import service_account
+import pandas as pd
+from google.cloud import bigquery
+from hatescan.params_hatescan import *
 
 st.title('Welcome to the Hater Scan App')
 
@@ -115,3 +119,27 @@ if scanner_user:
         elif key == '4':
             class_name = "Sports"
         st.write(f"{class_name}:  {value} %")
+    
+# GET data from BigQuery
+# Create API client.
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"]
+)
+client = bigquery.Client(credentials=credentials)
+
+# Perform query.
+# Uses st.cache_data to only rerun when the query changes or after 10 min.
+@st.cache_data(ttl=600)
+def run_query(query):
+    query_job = client.query(query)
+    rows_raw = query_job.result()
+    # Convert to list of dicts. Required for st.cache_data to hash the return value.
+    rows = [dict(row) for row in rows_raw]
+    return rows
+
+# Load 10 rows
+rows = run_query("SELECT * FROM 'crucial-strata-384013.UserName_HateScann' LIMIT 10")
+# Show first 10 rows of DataFrame
+df = pd.DataFrame(rows)
+st.dataframe(df)
+st.write(df)

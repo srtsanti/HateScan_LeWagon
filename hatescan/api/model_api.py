@@ -7,6 +7,9 @@ from hatescan.ml_logic.preprocessor import preprocessing, load_tokenizer_scale_m
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from hatescan.api.user_twitter_api import analyse_twitter_profile
+from google.cloud import bigquery
+from hatescan.params_hatescan import *
+from hatescan.api.bquery import load_data_to_bq
 
 
 app = FastAPI()
@@ -14,6 +17,7 @@ app.state.model_1 = load_model_hatescale()
 app.state.model_2 = load_model_hatetopic()
 app.state.tokenizer_scale = load_tokenizer_scale_model()
 app.state.tokenizer_topic = load_tokenizer_topic_model()
+client = bigquery.Client()
 
 # Allowing all middleware is optional, but good practice for dev purposes
 app.add_middleware(
@@ -27,7 +31,7 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {
-    'Welcome': 'Welcome to the API of HateScan 2!!'}
+    'Welcome': 'Welcome to the API of HateScan 3!!'}
     
 
 @app.get("/predict")
@@ -75,7 +79,7 @@ def predict(
     ):
 
     #Getting the list of tweets from API Twitter
-    list_of_tweets = analyse_twitter_profile(user, n_tweets)
+    list_of_tweets, user_name, name_lastname, nr_followers, is_verified, media_count = analyse_twitter_profile(user, n_tweets)
     
     df = pd.DataFrame(list_of_tweets, columns=['TweetText'])
     
@@ -111,6 +115,24 @@ def predict(
     list_topics = list(np.round(y_pred_topics, 2))
     list_topics = [round(float(each), 2) for each in list_topics]
     dict_topics = dict(zip(range(0,5),list_topics))
+    
+    #Create DF to load to BQ
+    data = {'user_name': [user_name],
+            'name_lastname': [name_lastname],
+        'nr_followers': [nr_followers],
+        'is_verified': [is_verified],
+        'media_count': [media_count],
+        'hate_label': [int(avg_ypred_scale)],
+        'Religion_class': [dict_topics[0]],
+        'Gender_class': [dict_topics[1]],
+        'Race_class': [dict_topics[2]],
+        'Politics_class' :[dict_topics[3]],
+        'Sports_class': [dict_topics[4]]}
+    
+    df_response = pd.DataFrame(data)
+
+    #Load to BigQuery
+    load_data_to_bq(df_response , GCP_PROJECT, BQ_DATASET, BQ_TABLE ,True)    
     
     return {'hate_scale' : pred_scale, 
             'hate_class': dict_topics}

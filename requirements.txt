@@ -12,6 +12,7 @@ scikit-learn==1.2.1
 db-dtypes
 pyarrow
 gensim
+google-cloud-bigquery==3.10.0
 
 
 # Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
