@@ -1,10 +1,14 @@
 import streamlit as st
-import web_app
-import v2_web_app
+
+# Importing py files for the Navigation of HateScan App
+import single_scan
+import account_scan
+import global_scan
 
 PAGES = {
-    # "Santi Web": web_app.show_web_app,
-    "Joaqo Layout": v2_web_app.show_new_layout
+    "Single Scan": single_scan.single_scan_page,
+    "Account Scan": account_scan.account_scan_page,
+    "Global Scan": global_scan.global_scan_page
 }
 
 st.sidebar.title('Navigation')
