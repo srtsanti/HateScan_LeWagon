@@ -11,19 +11,19 @@ from tensorflow.keras.preprocessing.text import text_to_word_sequence
 
 #import, initialize and compile model
 
-def initialize_model(vocab_size, embedding_dimension, learning_rate):
-    l12 = regularizers.L1L2() #play with hyperparams
+def initialize_label_model(vocab_size, embedding_dimension, learning_rate):
+    l12 = regularizers.L2() #play with hyperparams
     model = Sequential()
     model.add(Embedding(input_dim=vocab_size + 1, output_dim=embedding_dimension, mask_zero=True))
     model.add(layers.Masking())
-    model.add(Bidirectional(LSTM(32,  return_sequences=True, kernel_regularizer=l12)))
+    model.add(Bidirectional(LSTM(32,  return_sequences=True, kernel_regulizer=l12)))
     model.add(Bidirectional(LSTM(16)))
-    model.add(Dense(16, activation='relu', kernel_regularizer=l12))
+    model.add(Dense(16, activation='relu', kernel_reguralizer=l12))
     model.add(Dropout(0.5))
-    model.add(Dense(3, activation='softmax'))
+    model.add(Dense(5, activation='softmax'))
 
     optimizer = Adam(learning_rate=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer=optimizer , metrics=['Precision', 'Accuracy']) #precision because unbalanced dataset
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer , metrics=['Accuracy']) #precision because unbalanced dataset
 
     return model
 
@@ -49,9 +49,8 @@ def train_model(
         epochs=100,
         batch_size=batch_size,
         callbacks=[es],
-        verbose=1,
-        class_weight = {0: (1-(35193/51842)), 1: (1-(9221/51842)), 2: (1-(7428/51842))} #more weight on class 1 & 2
-    )
+        verbose=1
+        )
 
     return model, history
 
@@ -66,7 +65,7 @@ def evaluate_model(
         print(f"\n❌ No model to evaluate")
         return None
 
-    test_loss, test_precision, test_acc = model.evaluate(
+    test_loss, test_acc = model.evaluate(
         x=X,
         y=y,
         batch_size=batch_size,
@@ -74,13 +73,13 @@ def evaluate_model(
         return_dict=True
     )
 
-    print(f"✅ Model evaluated, Precision: {round(test_precision, 2)}")
     print(f"✅ Model evaluated, Accuracy: {round(test_acc, 2)}")
 
-    return test_loss, test_precision, test_acc
+    return test_loss, test_acc
 
 # Making predictions fromt the model
 def model_predict(model,
                   X_new: np.array):
+
     predictions = model.predict(X_new)
     print(predictions)

@@ -50,14 +50,14 @@ def save_tokenizer(tokenizer):
     # saving
     with open('token_pickle/tokenizer.pickle', 'wb') as handle:
         pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    
+
 def load_tokenizer_scale_model():
     # loading
     file_path = glob.glob('token_pickle_scale/*.pickle')[0]
     with open(file_path, 'rb') as handle:
         tokenizer = pickle.load(handle)
     return tokenizer
-    
+
 def load_tokenizer_topic_model():
     # loading
     file_path = glob.glob('token_pickle_topic/*.pickle')[0]
