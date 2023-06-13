@@ -17,8 +17,7 @@ def analyse_twitter_profile(input, n_tweets_retreved):
     user_name = response['data']['user']['result']['legacy']['screen_name']
     name_lastname = response['data']['user']['result']['legacy']['name']
     nr_followers = response['data']['user']['result']['legacy']['followers_count']
-    is_verified = response['data']['user']['result']['legacy']['verified']
-    media_count = response['data']['user']['result']['legacy']['media_count']
+    tweets_account = response['data']['user']['result']['legacy']['statuses_count']
 
     #get user's tweets
     rest_id = response['data']['user']['result']['rest_id']
@@ -39,4 +38,4 @@ def analyse_twitter_profile(input, n_tweets_retreved):
     except:
         print("Twitter account does not have enough publications.")
     
-    return tweet_list, user_name, name_lastname, nr_followers, is_verified, media_count
+    return tweet_list, user_name, name_lastname, nr_followers, tweets_account

@@ -61,7 +61,7 @@ def predict(
     
     #Pred Model Scale
     y_pred_scale = model_scale.predict(X_pred_pad_scale)
-    pred_scale = {'HateLabel': int(np.argmax(y_pred_scale))}
+    pred_scale = {'HateLabel': float(np.argmax(y_pred_scale))}
 
     #Pred Model Topic
     y_pred_topics = model_topic.predict(X_pred_pad_topic)
@@ -73,13 +73,15 @@ def predict(
             'hate_class': dict_topics}
 
 @app.get("/predict_user")
-def predict(
+def predict_user(
         user: str,
         n_tweets : int# tweet string
     ):
 
     #Getting the list of tweets from API Twitter
-    list_of_tweets, user_name, name_lastname, nr_followers, is_verified, media_count = analyse_twitter_profile(user, n_tweets)
+    list_of_tweets, user_name, name_lastname, nr_followers, tweets_account = analyse_twitter_profile(user, n_tweets)
+    
+    list_of_tweets = [each for each in list_of_tweets if len(each) > 23]
     
     df = pd.DataFrame(list_of_tweets, columns=['TweetText'])
     
@@ -105,9 +107,9 @@ def predict(
     
     y_pred_scale = model_scale.predict(X_pred_pad_scale)
     y_pred_scale = np.argmax(y_pred_scale, axis=1)
-    # We need to see what to do as thershold 
+    # We need to see what to do as thershold
     avg_ypred_scale = np.mean(y_pred_scale)
-    pred_scale = {'HateLabel': int(avg_ypred_scale)}
+    pred_scale = {'HateLabel': float(avg_ypred_scale)}
     
     #Pred Model Topic
     y_pred_topics = model_topic.predict(X_pred_pad_topic)
@@ -119,20 +121,32 @@ def predict(
     #Create DF to load to BQ
     data = {'user_name': [user_name],
             'name_lastname': [name_lastname],
-        'nr_followers': [nr_followers],
-        'is_verified': [is_verified],
-        'media_count': [media_count],
-        'hate_label': [int(avg_ypred_scale)],
-        'Religion_class': [dict_topics[0]],
-        'Gender_class': [dict_topics[1]],
-        'Race_class': [dict_topics[2]],
-        'Politics_class' :[dict_topics[3]],
-        'Sports_class': [dict_topics[4]]}
+            'nr_followers': [nr_followers],
+            'tweets_account': [tweets_account],
+            'tweets_analysed': [n_tweets],
+            'hate_label': [float(avg_ypred_scale)],
+            'Religion_class': [dict_topics[0]],
+            'Gender_class': [dict_topics[1]],
+            'Race_class': [dict_topics[2]],
+            'Politics_class' :[dict_topics[3]],
+            'Sports_class': [dict_topics[4]]}
     
     df_response = pd.DataFrame(data)
 
     #Load to BigQuery
-    load_data_to_bq(df_response , GCP_PROJECT, BQ_DATASET, BQ_TABLE ,True)    
+    load_data_to_bq(df_response , GCP_PROJECT, BQ_DATASET, BQ_TABLE ,False)    
     
     return {'hate_scale' : pred_scale, 
             'hate_class': dict_topics}
+
+
+# users_list = ['TopGirlKeiko',
+#                    ]
+
+# for u in users_list:
+#     try:
+#         predict_user(u, 30)
+#         print(f'{u} loaded to BQ')
+#     except KeyError:
+#         print(f'User {u} not found. Skipping to the next user.')
+#         continue
