@@ -6,8 +6,16 @@ from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from gensim.models import Word2Vec
 from tensorflow.keras.preprocessing.text import Tokenizer
-
 import numpy as np
+import nltk
+import glob
+import pickle
+
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
 
 def preprocessing(sentence):
     # Basic cleaning
@@ -32,27 +40,27 @@ def preprocessing(sentence):
 
 def tokenizer(X):
     tokenizer = Tokenizer()
-    tokenizer.fit_on_texts(X) #will need "toknizer" to defin the vocab size
-    X_token = tokenizer.texts_to_sequences(X)
+    tokenizer.fit_on_texts(X)
+    save_tokenizer(tokenizer)
     vocab_size = len(tokenizer.word_index)
+    X_token = tokenizer.texts_to_sequences(X)
     return X_token, vocab_size
 
+def save_tokenizer(tokenizer):
+    # saving
+    with open('token_pickle/tokenizer.pickle', 'wb') as handle:
+        pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-# Function to convert a sentence (list of words) into a matrix representing the words in the embedding space
-'''def embed_sentence(word2vec, sentence):
-    embedded_sentence = []
-    for word in sentence:
-        if word in word2vec.wv:
-            embedded_sentence.append(word2vec.wv[word])
+def load_tokenizer_scale_model():
+    # loading
+    file_path = glob.glob('token_pickle_scale/*.pickle')[0]
+    with open(file_path, 'rb') as handle:
+        tokenizer = pickle.load(handle)
+    return tokenizer
 
-    return np.array(embedded_sentence)'''
-
-# Function that converts a list of sentences into a list of matrices
-'''def embedding(word2vec, sentences):
-    embed = []
-
-    for sentence in sentences:
-        embedded_sentence = embed_sentence(word2vec, sentence)
-        embed.append(embedded_sentence)
-
-    return embed'''
+def load_tokenizer_topic_model():
+    # loading
+    file_path = glob.glob('token_pickle_topic/*.pickle')[0]
+    with open(file_path, 'rb') as handle:
+        tokenizer = pickle.load(handle)
+    return tokenizer

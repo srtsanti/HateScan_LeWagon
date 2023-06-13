@@ -82,6 +82,5 @@ def evaluate_model(
 # Making predictions fromt the model
 def model_predict(model,
                   X_new: np.array):
-
     predictions = model.predict(X_new)
     print(predictions)
