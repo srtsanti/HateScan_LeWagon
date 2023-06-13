@@ -4,6 +4,8 @@ import time
 import pandas as pd
 import plotly.graph_objects as go
 import altair as alt
+import requests
+from single_scan import *
 
 def account_scan_page():
     spacing = '''
@@ -21,6 +23,24 @@ def account_scan_page():
         </style>
     '''
 
+
+    # Emojis on our Hate Scale
+    scale_mapping = {
+            0: ("Normal", "🙂"),
+            1: ("Offensive", "😡"),
+            2: ("Hate", "🤬")
+        }
+
+    def format_hate_scale(value):
+        if value == 0:
+            return "Normal 🙂"
+        elif value == 1:
+            return "Offensive 😡"
+        elif value == 2:
+            return "Hate 🤬"
+        else:
+            return str(value)
+
     # Hate Scan Title
     st.title('AccountScan :mega:')
     st.write('Welcome to our Hate Speech recognition app')
@@ -29,13 +49,49 @@ def account_scan_page():
     st.markdown(spacing, unsafe_allow_html=True)
     st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
 
-    # Section 1 - Tweet Box
-    st.subheader('Enter Twitter username:')
-    tweet = st.text_area("Username Box", max_chars=50)
-    st.markdown("Scan:")
-    st.write(tweet)
-    scanner = st.button('Scan Account')
+    ### API CON - Account Scan
 
+    url_2 = st.secrets['key_ap_user']
+
+    st.subheader("Enter Twitter username")
+    user = st.text_input("Enter your user:", max_chars=50)
+
+    n_tweets = st.slider("Select the number of tweets to analyze", 5, 50, 15)
+
+    params_2 = {'user' : user,
+                'n_tweets': n_tweets }
+
+    scanner_user = st.button('Scan user')
+
+    # This is the code for printing the Hate scale
+    if scanner_user:
+        response = requests.get(url_2, params=params_2)
+        #Connection to model_scale through our API
+        scale = response.json()['hate_scale']['HateLabel']
+        #Connection to model_topic through our API
+        topics = response.json()['hate_class']
+        if scale in scale_mapping:
+            label, emoji = scale_mapping[scale]
+            st.write("Hate label prediction:", f"{label} {emoji}")
+            st.subheader("Hate Scale:")
+
+        else:
+            st.write("Hate Label Scale:", scale)
+
+    # This is the code for printing the Hate topics
+        for key, value in topics.items():
+            class_name = ""
+            if key == '0':
+                class_name = "Religion"
+            elif key == '1':
+                class_name = "Gender"
+            elif key == '2':
+                class_name = "Race"
+            elif key == '3':
+                class_name = "Politics"
+            elif key == '4':
+                class_name = "Sports"
+            st.write(f"{class_name}:  {value} %")
 
     # Gap CSS
     st.markdown(gap, unsafe_allow_html=True)
@@ -45,24 +101,22 @@ def account_scan_page():
     st.subheader('Account Metrics')
 
     # Assuming you have variables `num_tweets` and `hate_percentage` with the corresponding values
-    num_tweets = 10
-    hate_label_acc = 'Offensive'
 
     # Create two columns
     col1, col2, col3 = st.columns(3)
 
     # Display the metrics in each column
     with col1:
-        st.metric('Account Name', 'Joaqo')
+        st.metric('Account Name', user)
     with col2:
-        st.metric('Number of Tweets Analyzed', num_tweets)
+        st.metric('Number of Tweets Analyzed', n_tweets)
     with col3:
-        st.metric("Hate Label of Account", 'Offensive')
+        st.metric("Number of Hate Tweets", '3/15')
 
     # Create the DataFrame
     data = pd.DataFrame({
-        'Category': ['Religion', 'Gender', 'Race', 'Politics', 'Sport'],
-        'Number of Tweets': [2, 5, 1, 2, 5]
+        'Category': ['Religion', 'Gender', 'Race', 'Politics', 'Sports'],
+        'Number of Tweets': [2,4,5,6,1]
     })
 
     # Define the custom color palette by combining shades of red and purple
@@ -99,5 +153,5 @@ def account_scan_page():
         )
     )
 
-    # Display the chart using Streamlit
+    # # Display the chart using Streamlit
     st.plotly_chart(fig)
