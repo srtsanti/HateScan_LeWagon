@@ -61,7 +61,7 @@ def predict(
     
     #Pred Model Scale
     y_pred_scale = model_scale.predict(X_pred_pad_scale)
-    pred_scale = {'HateLabel': float(np.argmax(y_pred_scale))}
+    pred_scale = {'HateLabel': (np.argmax(y_pred_scale))}
 
     #Pred Model Topic
     y_pred_topics = model_topic.predict(X_pred_pad_topic)
@@ -140,8 +140,53 @@ def predict_user(
             'hate_class': dict_topics}
 
 
-# users_list = ['TopGirlKeiko',
-#                    ]
+# users_list = ["realDonaldTrump",
+#                        "narendramodi",
+#                        'JoeBiden',
+#                        'HillaryClinton',
+#                        'AmitShah', 
+#                        'dalailama',
+#                        'pontifex',
+#                        'rterdogan',
+#                        'jokowi',
+#                        'ImranKhanPTI',
+#                        'HHShkMohd',
+#                        'QueenRania',
+#                        'justinbieber',
+#                        'Cristiano',
+#                        'rihanna',
+#                        'katyperry',
+#                        'KimKardashian',
+#                        'BillGates'
+#                        'neymarjr',
+#                        'jimmyfallon',
+#                        'Oprah',
+#                        'CeeLoGreen',
+#                        'JamesGunn',
+#                        'therealroseanne',
+#                        'amandabynes',
+#                        '50Cent',
+#                        'chrisbrown',
+#                        'Cobratate',
+#                        'berlusconi',
+#                        'matteosalvinimi',
+#                        'KyrieIrving',
+#                        'peterthiel',
+#                        'MattWalshBlog',
+#                         'RatiosCrazy',
+#                         'KingCharlesUK', 
+#                         'TopGirlKeiko',
+#                    'youngkingsgrow',
+#                    'ReachTWR',
+#                    'TomiLahren',
+#                    'YeonmiParkNK',
+#                    'dillondanis',
+#                    'moonzyNFT',
+#                    'SargsianNikita',
+#                    'jester2806',
+#                    'ROLLNUMONE',
+#                    'gabechoiluon',
+#                    'ittybittybabyy1']
 
 # for u in users_list:
 #     try:

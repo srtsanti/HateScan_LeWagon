@@ -49,7 +49,7 @@ def load_model_hatescale() -> keras.Model:
         most_recent_model_path_on_disk = sorted(local_model_paths)[-1]
 
         print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
-
+        
         latest_model = keras.models.load_model(most_recent_model_path_on_disk)
 
         print("✅ Model loaded from local disk")

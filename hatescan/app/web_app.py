@@ -24,6 +24,14 @@ def format_hate_scale(value):
         return "🤬"
     else:
         return str(value)
+    
+def transform_hate_label(scale):
+    if 0 <= scale < 0.85:
+        return 0
+    elif 0.85 <= scale < 1.35:
+        return 1
+    elif scale >= 1.35:
+        return 2
 
 # GET data from BigQuery
 # Create API client.
@@ -57,12 +65,7 @@ if scanner:
     response = requests.get(url, params=params)
     #Connection to model_scale through our API
     scale = response.json()['hate_scale']['HateLabel']
-    if 0 < scale < 0.15:
-        scale = 0
-    elif 0.15 <= scale < 1.05:
-        scale = 1
-    elif scale >= 1.05:
-        scale = 2
+    scale = transform_hate_label(scale)
     #Connection to model_topic through our API
     topics = response.json()['hate_class']
     if scale in scale_mapping:
@@ -124,12 +127,7 @@ if scanner_user:
         hate_columns = ['hate_label','Religion_class', 'Gender_class', 'Race_class', 'Politics_class', 'Sports_class']
         hate_data = query_result[hate_columns]
         scale = hate_data['hate_label'].item()
-        if 0 < scale < 0.15:
-            scale = 0
-        elif 0.15 <= scale < 1.05:
-            scale = 1
-        elif scale >= 1.05:
-            scale = 2
+        scale = transform_hate_label(scale)
         if scale in scale_mapping:
             label, emoji = scale_mapping[scale]
             st.write("Hate Label Scale:", f"{label} {emoji}")
@@ -152,12 +150,7 @@ if scanner_user:
         response = requests.get(url_2, params=params_2)
         #Connection to model_scale through our API
         scale = response.json()['hate_scale']['HateLabel']
-        if 0 < scale < 0.15:
-            scale = 0
-        elif 0.15 <= scale < 1.05:
-            scale = 1
-        elif scale >= 1.05:
-            scale = 2
+        scale = transform_hate_label(scale)
         #Connection to model_topic through our API
         topics = response.json()['hate_class']
         if scale in scale_mapping:
@@ -197,7 +190,7 @@ st.markdown("---")
 query = f"""
     SELECT * 
     FROM {GCP_PROJECT}.{BQ_DATASET}.{BQ_TABLE}
-    LIMIT 20
+    LIMIT 200
 """
 df_queried = run_query(query)
 
@@ -205,11 +198,33 @@ pca = PCA(n_components=3)
 pca_df = pca.fit_transform(df_queried[['Religion_class', 'Gender_class', 'Race_class', 'Politics_class', 'Sports_class']])
 pca_df = pd.DataFrame(pca_df, columns=['pca_1', 'pca_2', 'pca_3'])
 df_combined = pd.concat([df_queried, pca_df], axis=1)
-fig = px.scatter_3d(df_combined, x= 'pca_1',
-                    y='pca_2', z='pca_3', 
-                    color='hate_label', size='nr_followers', 
-                    hover_name='name_lastname', color_continuous_scale='temps', 
-                    range_color=[0, 2])
+# Calculate the normalized sizes based on 'nr_followers'
+max_followers = df_combined['nr_followers'].max()
+min_followers = df_combined['nr_followers'].min()
+df_combined['normalized_size'] = ((df_combined['nr_followers'] - min_followers) / (max_followers - min_followers)) * 100
+# Apply the transformation to the 'hate_label' column
+df_combined['hate_label'] = df_combined['hate_label'].apply(lambda x: 0 if 0 <= x < 0.85 else (1 if 0.85 <= x < 1.35 else (2 if 1.35 <= x else 0)))
+df_combined['hate_label_name'] = df_combined['hate_label']
+df_combined['hate_label_name'] = df_combined['hate_label_name'].replace(0, "Normal")
+df_combined['hate_label_name'] = df_combined['hate_label_name'].replace(1, "Offensive")
+df_combined['hate_label_name'] = df_combined['hate_label_name'].replace(2, "Hate")
+fig = px.scatter_3d(df_combined, x='pca_1', y='pca_2', z='pca_3', color='hate_label',
+                    size='normalized_size', hover_name='name_lastname', color_continuous_scale='temps',
+                    range_color=[0, 2], size_max=50, custom_data=['hate_label', 'name_lastname', 'nr_followers', 'hate_label_name'])
+fig.update_layout(
+    scene=dict(
+        xaxis_title='PCA 1',
+        yaxis_title='PCA 2',
+        zaxis_title='PCA 3',
+        camera=dict(
+            eye=dict(x=1, y=-1.5, z=1)
+        )
+    ),
+    margin=dict(l=0, r=0, b=0, t=0)
+)
+fig.update_traces(opacity=1, marker=dict(symbol='circle'), hovertemplate='<b>%{hovertext}</b><br>Hate Label: %{customdata[3]}<br>Followers: %{customdata[2]:,.0f}')
+fig.update_layout(coloraxis_colorbar=dict(title='Hate Label'), coloraxis_colorbar_len=1, coloraxis_colorbar_thickness=15)
+st.title("Twitter User profile")
 st.plotly_chart(fig)
 
 #Space for graph
