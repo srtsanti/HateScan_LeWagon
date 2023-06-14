@@ -103,15 +103,17 @@ def account_scan_page():
     # Assuming you have variables `num_tweets` and `hate_percentage` with the corresponding values
 
     # Create two columns
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3  = st.columns(3)
 
     # Display the metrics in each column
     with col1:
         st.metric('Account Name', user)
     with col2:
         st.metric('Number of Tweets Analyzed', n_tweets)
+    # with col3:
+    #     st.metric("Number of Hate Tweets", '3/15')
     with col3:
-        st.metric("Number of Hate Tweets", '3/15')
+        st.metric("Number of Hate Tweets", 'Offensive')
 
     # Create the DataFrame
     data = pd.DataFrame({
