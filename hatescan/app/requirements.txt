@@ -8,9 +8,9 @@ numpy
 requests
 
 # account scan
-plotly.graph_objects
+plotly
 altair
-plotly.express
+
 
 # global scan
 matplotlib.pyplot
