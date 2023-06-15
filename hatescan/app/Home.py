@@ -6,7 +6,7 @@ from PIL import Image
 
 st.title('Hi, welcome to Hatescan :wave:')
 
-logo = Image.open("images/logo.svg")
+logo = Image.open("hatescan/app/images/logo.svg")
 st.image(logo, width=200)
 
 
