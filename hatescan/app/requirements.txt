@@ -13,6 +13,6 @@ altair
 
 
 # global scan
-matplotlib.pyplot
+matplotlib
 seaborn
-sklearn.decomposition
+sklearn
