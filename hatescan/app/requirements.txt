@@ -1,7 +1,8 @@
-# web_main
+# Home
 streamlit
 pandas
 google-cloud-bigquery==3.10.0
+PIL
 
 # single scan
 numpy
