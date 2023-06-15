@@ -12,7 +12,8 @@ import time
 import pandas as pd
 from sklearn.decomposition import PCA
 import plotly.express as px
-from hatescan.app.pages.single_scan import run_query, transform_hate_label, format_hate_scale
+from google.oauth2 import service_account
+from google.cloud import bigquery
 
 def global_scan_page():
 
@@ -39,6 +40,28 @@ def global_scan_page():
     st.markdown(spacing, unsafe_allow_html=True)
     st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
 
+    #  GET data from BigQuery
+    # Create API client.
+    credentials = service_account.Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"]
+    )
+    client = bigquery.Client(credentials=credentials)
+
+    def run_query(query):
+        query_job = client.query(query)
+        rows_raw = query_job.result()
+        # Convert to list of dicts. Required for st.cache_data to hash the return value.
+        rows = [dict(row) for row in rows_raw]
+        df = pd.DataFrame(rows)
+        return df
+
+    def transform_hate_label(scale):
+                if 0 <= scale < 0.85:
+                    return 0
+                elif 0.85 <= scale < 1.5:
+                    return 1
+                elif scale >= 1.5:
+                    return 2
 
     query = f"""
     SELECT *
