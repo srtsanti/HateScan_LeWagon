@@ -178,3 +178,9 @@ def account_scan_page():
     # Gap CSS
     st.markdown(gap, unsafe_allow_html=True)
     st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
+
+
+
+
+
+account_scan_page()

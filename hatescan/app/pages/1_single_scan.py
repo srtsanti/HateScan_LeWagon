@@ -154,3 +154,7 @@ def single_scan_page():
                 st.markdown(f"<span style='font-size: 1.2em; color: red;'>{class_name}: {round((value*100))}%</span>", unsafe_allow_html=True)
             else:
                 st.write(f"{class_name}: {round((value*100))}%")
+
+
+
+single_scan_page()

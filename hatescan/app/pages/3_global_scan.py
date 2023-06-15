@@ -187,3 +187,6 @@ def global_scan_page():
 
         # Display the chart using Streamlit
         st.altair_chart(chart, use_container_width=True)
+
+
+global_scan_page()
