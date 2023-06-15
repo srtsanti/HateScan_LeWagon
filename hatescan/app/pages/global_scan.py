@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import time
 import pandas as pd
-from hatescan.params_hatescan import *
 from sklearn.decomposition import PCA
 import plotly.express as px
 from single_scan import run_query, transform_hate_label, format_hate_scale
@@ -43,7 +42,7 @@ def global_scan_page():
 
     query = f"""
     SELECT *
-    FROM {GCP_PROJECT}.{BQ_DATASET}.{BQ_TABLE}
+    FROM {st.secrets["GCP_PROJECT"]}.{st.secrets["BQ_DATASET"]}.{st.secrets["BQ_TABLE"]}
     LIMIT 1000
     """
     df_queried = run_query(query)

@@ -4,7 +4,6 @@ import requests
 from google.oauth2 import service_account
 import pandas as pd
 from google.cloud import bigquery
-from hatescan.params_hatescan import *
 from sklearn.decomposition import PCA
 import plotly.express as px
 
@@ -122,7 +121,7 @@ scanner_user = st.button('Scan user')
 # Query to check if username is in BQ
 query_user_bq = f"""
 WITH temp_table as (
-SELECT *, LOWER(user_name) as name_lower FROM {GCP_PROJECT}.{BQ_DATASET}.{BQ_TABLE})
+SELECT *, LOWER(user_name) as name_lower FROM {st.secrets["GCP_PROJECT"]}.{st.secrets["BQ_DATASET"]}.{st.secrets["BQ_TABLE"]})
 SELECT * from temp_table
 WHERE name_lower = LOWER('{user}')
 """
@@ -197,7 +196,7 @@ st.markdown("---")
 
 query = f"""
     SELECT *
-    FROM {GCP_PROJECT}.{BQ_DATASET}.{BQ_TABLE}
+    FROM {st.secrets["GCP_PROJECT"]}.{st.secrets["BQ_DATASET"]}.{st.secrets["BQ_TABLE"]}
     LIMIT 200
 """
 df_queried = run_query(query)

@@ -4,7 +4,6 @@ import numpy as np
 import time
 import bigquery
 import requests
-from hatescan.params_hatescan import *
 
 # Google imports
 from google.oauth2 import service_account

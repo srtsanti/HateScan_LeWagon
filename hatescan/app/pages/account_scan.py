@@ -7,7 +7,6 @@ import plotly.graph_objects as go
 import altair as alt
 import requests
 
-from hatescan.params_hatescan import *
 from sklearn.decomposition import PCA
 from google.oauth2 import service_account
 from google.cloud import bigquery
@@ -103,7 +102,7 @@ def account_scan_page():
     # Query to check if username is in BQ
     query_user_bq = f"""
     WITH temp_table as (
-    SELECT *, LOWER(user_name) as name_lower FROM {GCP_PROJECT}.{BQ_DATASET}.{BQ_TABLE})
+    SELECT *, LOWER(user_name) as name_lower FROM {st.secrets["GCP_PROJECT"]}.{st.secrets["BQ_DATASET"]}.{st.secrets["BQ_TABLE"]})
     SELECT * from temp_table
     WHERE name_lower = LOWER('{user}')
     """
