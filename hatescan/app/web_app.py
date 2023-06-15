@@ -114,7 +114,7 @@ scanner_user = st.button('Scan user')
 # Query to check if username is in BQ
 query_user_bq = f"""
 WITH temp_table as (
-SELECT *, LOWER(user_name) as name_lower FROM `crucial-strata-384013.HateScann_DataSet.UserName_HateScann`)
+SELECT *, LOWER(user_name) as name_lower FROM {GCP_PROJECT}.{BQ_DATASET}.{BQ_TABLE})
 SELECT * from temp_table
 WHERE name_lower = LOWER('{user}')
 """
