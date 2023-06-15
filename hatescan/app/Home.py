@@ -5,10 +5,6 @@ from google.cloud import bigquery
 from PIL import Image
 
 st.title('Hi, welcome to Hatescan :wave:')
-
-logo = Image.open("hatescan/app/images/logo.svg")
-st.image(logo, width=200)
-
 st.write('Enjoy scanning')
 
 
