@@ -12,11 +12,12 @@ scikit-learn==1.2.1
 db-dtypes
 pyarrow
 gensim
+google-cloud-bigquery==3.10.0
 
 
-# Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
-tensorflow-macos==2.10.0; sys_platform == 'darwin' and 'ARM' in platform_version # Mac M-chips
-tensorflow==2.10.0; sys_platform == 'darwin' and 'ARM' not in platform_version # Mac Intel chips
+# # Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
+# tensorflow-macos==2.10.0; sys_platform == 'darwin' and 'ARM' in platform_version # Mac M-chips
+# tensorflow==2.10.0; sys_platform == 'darwin' and 'ARM' not in platform_version # Mac Intel chips
 tensorflow
 
 # prevent bq 3+ db-dtypes package error when running training from bq
@@ -28,6 +29,9 @@ psycopg2-binary
 fastapi
 pytz
 uvicorn
+
+#For streamlit
+protobuf
 
 
 

@@ -17,6 +17,9 @@ GCR_MEMORY = os.environ.get("GCR_MEMORY")
 
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 
+BQ_DATASET = os.environ.get("BQ_DATASET")
+BQ_TABLE = os.environ.get("BQ_TABLE")
+
 TWITTER_USER_URL = os.environ.get("TWITTER_USER_URL")
 X_RapidAPI_Key = os.environ.get("X_RapidAPI_Key")
 X_RapidAPI_Host = os.environ.get("X_RapidAPI_Host")

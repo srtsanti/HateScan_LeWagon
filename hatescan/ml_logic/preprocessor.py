@@ -10,6 +10,8 @@ import numpy as np
 import nltk
 import glob
 import pickle
+import unicodedata
+import re
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
@@ -19,22 +21,36 @@ nltk.download('wordnet')
 
 def preprocessing(sentence):
     # Basic cleaning
+    sentence = sentence.lower()
     sentence = sentence.strip() ## remove whitespaces
     sentence = sentence.replace('’', '')
+    sentence = sentence.replace('"', '')
+    sentence = sentence.replace('“', '')
+    sentence = sentence.replace('”', '')
+    sentence = sentence.replace('rt', '')
+
     sentence = sentence.lower() ## lowercase
-    sentence = ''.join(char for char in sentence if char.isalpha() or char == " ") ## stay with letter
-    ' '.join([ word for word in sentence.split() if not word.startswith('https') ]) #delete links
+    sentence = ''.join(char for char in sentence if not char.isdigit()) ## stay with letter
+    sentence = ' '.join([word for word in sentence.split() if not word.startswith(('https', '@', '#', 'http'))]) #delete links, @mentions, #hashtags
+    words = sentence.split()  # split into words
+    words = [word for word in words if not any(substr in word for substr in ['https', '@', '#'])]  # delete words containing links, @, or #
+    sentence = ' '.join(words)    # Remove emojis
+    emoji_pattern = re.compile("["
+        u"\U0001F600-\U0001F64F"  # emoticons
+        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+        u"\U0001F680-\U0001F6FF"  # transport & map symbols
+        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                           "]+", flags=re.UNICODE)
+    sentence = emoji_pattern.sub(r'', sentence)
 
     # Advanced cleaning
     for punctuation in string.punctuation:
-        sentence = sentence.replace(punctuation, '') ## remove punctuation
+        sentence = sentence.replace(punctuation, '')## remove punctuation
 
-    tokenized_sentence = word_tokenize(sentence) ## split sentence into list
-    stop_words = set(stopwords.words('english')) ## define stopwords
-
-    tokenized_sentence_cleaned = [ w for w in tokenized_sentence if not w in stop_words] ## remove stopwords
-    lemmatized = [WordNetLemmatizer().lemmatize(word, pos = "v") for word in tokenized_sentence_cleaned]
+    tokenized_sentence = word_tokenize(sentence) ## tokenize
+    lemmatized = [WordNetLemmatizer().lemmatize(word, pos = "v") for word in tokenized_sentence]
     noun_lemmatized = [WordNetLemmatizer().lemmatize(word, pos = "n") for word in lemmatized]
+
     cleaned_text = ' '.join(word for word in noun_lemmatized)
     return cleaned_text
 
