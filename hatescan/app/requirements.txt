@@ -15,4 +15,4 @@ altair
 # global scan
 matplotlib
 seaborn
-sklearn
+scikit-learn
