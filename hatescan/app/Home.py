@@ -2,23 +2,35 @@ import streamlit as st
 import pandas as pd
 from google.oauth2 import service_account
 from google.cloud import bigquery
+from PIL import Image
 
-# # Importing py files for the Navigation of HateScan App
-# import single_scan
-# import account_scan
-# import global_scan
+st.title('Hi, welcome to Hatescan :wave:')
 
-# PAGES = {
-#     "Single Scan": single_scan.single_scan_page,
-#     "Account Scan": account_scan.account_scan_page,
-#     "Global Scan": global_scan.global_scan_page,
-# }
+logo = Image.open("images/logo.svg")
+st.image(logo, width=200)
 
-st.title('Hello')
-st.write('Insert LOGO here')
-# page = st.sidebar.radio("Go to", list(PAGES.keys()))
 
-# PAGES[page]()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # import streamlit as st
 # import time

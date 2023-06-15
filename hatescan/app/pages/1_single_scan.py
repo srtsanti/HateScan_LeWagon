@@ -3,11 +3,9 @@ import pandas as pd
 import numpy as np
 import time
 import requests
-
 # Google imports
 from google.oauth2 import service_account
 from google.cloud import bigquery
-
 
 #  GET data from BigQuery
 # Create API client.
