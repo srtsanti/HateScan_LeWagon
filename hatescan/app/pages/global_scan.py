@@ -12,7 +12,7 @@ import time
 import pandas as pd
 from sklearn.decomposition import PCA
 import plotly.express as px
-from single_scan import run_query, transform_hate_label, format_hate_scale
+from hatescan.app.pages.single_scan import run_query, transform_hate_label, format_hate_scale
 
 def global_scan_page():
 
