@@ -24,13 +24,13 @@ def format_hate_scale(value):
         return "🤬"
     else:
         return str(value)
-    
+
 def transform_hate_label(scale):
     if 0 <= scale < 0.85:
         return 0
-    elif 0.85 <= scale < 1.35:
+    elif 0.85 <= scale < 1.5:
         return 1
-    elif scale >= 1.35:
+    elif scale >= 1.5:
         return 2
 
 # GET data from BigQuery
@@ -46,6 +46,14 @@ def run_query(query):
     rows = [dict(row) for row in rows_raw]
     df = pd.DataFrame(rows)
     return df
+
+def transform_hate_label(scale):
+            if 0 <= scale < 0.85:
+                return 0
+            elif 0.85 <= scale < 1.5:
+                return 1
+            elif scale >= 1.5:
+                return 2
 
 ### WEB STARTS HERE ###
 
@@ -78,9 +86,9 @@ if scanner:
                                   format_func=format_hate_scale)
     else:
         st.write("Hate Label Scale:", scale)
-    
+
     st.markdown("---")
-    
+
 # This is the code for printing the Hate topics
     st.title('Hate topics:')
     for key, value in topics.items():
@@ -106,7 +114,7 @@ st.title("Twitter User profile")
 user = st.text_area("Enter your user:", max_chars=50)
 n_tweets = st.slider("Select a number between 5 and 50", 5, 50, 15)
 
-params_2 = {'user' : user, 
+params_2 = {'user' : user,
             'n_tweets': n_tweets }
 
 scanner_user = st.button('Scan user')
@@ -144,7 +152,7 @@ if scanner_user:
         top_values.index = top_values.index.str.replace('_class', '')
         formatted_values = top_values.applymap(lambda x: f'{x:.1%}')
         for index, value in formatted_values.iterrows():
-            st.write(f'{index}: {value[0]}')            
+            st.write(f'{index}: {value[0]}')
     else:
         # This is the code for printing the Hate scale
         response = requests.get(url_2, params=params_2)
@@ -163,7 +171,7 @@ if scanner_user:
                                     format_func=format_hate_scale)
         else:
             st.write("Hate Label Scale:", scale)
-        
+
         st.markdown("---")
         # This is the code for printing the Hate topics
         st.title('Hate topics:')
@@ -188,7 +196,7 @@ st.markdown("---")
 
 
 query = f"""
-    SELECT * 
+    SELECT *
     FROM {GCP_PROJECT}.{BQ_DATASET}.{BQ_TABLE}
     LIMIT 200
 """
@@ -203,7 +211,7 @@ max_followers = df_combined['nr_followers'].max()
 min_followers = df_combined['nr_followers'].min()
 df_combined['normalized_size'] = ((df_combined['nr_followers'] - min_followers) / (max_followers - min_followers)) * 100
 # Apply the transformation to the 'hate_label' column
-df_combined['hate_label'] = df_combined['hate_label'].apply(lambda x: 0 if 0 <= x < 0.85 else (1 if 0.85 <= x < 1.35 else (2 if 1.35 <= x else 0)))
+df_combined['hate_label'] = df_combined['hate_label'].apply(transform_hate_label)
 df_combined['hate_label_name'] = df_combined['hate_label']
 df_combined['hate_label_name'] = df_combined['hate_label_name'].replace(0, "Normal")
 df_combined['hate_label_name'] = df_combined['hate_label_name'].replace(1, "Offensive")

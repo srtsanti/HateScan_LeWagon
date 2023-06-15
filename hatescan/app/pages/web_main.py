@@ -1,4 +1,7 @@
 import streamlit as st
+import pandas as pd
+from google.oauth2 import service_account
+from google.cloud import bigquery
 
 # Importing py files for the Navigation of HateScan App
 import single_scan
