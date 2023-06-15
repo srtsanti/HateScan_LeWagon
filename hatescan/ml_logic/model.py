@@ -8,28 +8,22 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.layers import Embedding, Bidirectional, LSTM, Dense, Dropout, Masking
 from tensorflow.keras.models import Sequential, layers, regularizers, optimizers
 from tensorflow.keras.preprocessing.text import text_to_word_sequence
-from tensorflow.keras.preprocessing.text import text_to_word_sequence
 
-#import and initialize model
+#import, initialize and compile model
 
-def initialize_model(vocab_size, embedding_dimension):
-    l2 = regularizers.l2() #play with hyperparams
+def initialize_model(vocab_size, embedding_dimension, learning_rate):
+    l12 = regularizers.L1L2() #play with hyperparams
     model = Sequential()
     model.add(Embedding(input_dim=vocab_size + 1, output_dim=embedding_dimension, mask_zero=True))
     model.add(layers.Masking())
-    model.add(Bidirectional(LSTM(64,  return_sequences=True)))
-    model.add(Bidirectional(LSTM(32)))
-    model.add(Dense(64, activation='relu', kernel_reguralizer=l2)) #add l2 regula
+    model.add(Bidirectional(LSTM(32,  return_sequences=True, kernel_regularizer=l12)))
+    model.add(Bidirectional(LSTM(16)))
+    model.add(Dense(16, activation='relu', kernel_regularizer=l12))
     model.add(Dropout(0.5))
     model.add(Dense(3, activation='softmax'))
 
-    return model
-
-# Compiling the model
-def compile_model(model, learning_rate):
-
     optimizer = Adam(learning_rate=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer=optimizer , metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer , metrics=['Precision', 'Accuracy']) #precision because unbalanced dataset
 
     return model
 
@@ -39,7 +33,7 @@ def train_model(
         X_train: np.ndarray,
         y_train: np.ndarray,
         batch_size=32,
-        patience=2,
+        patience=5,
         validation_split=0.2
     ):
 
@@ -56,7 +50,7 @@ def train_model(
         batch_size=batch_size,
         callbacks=[es],
         verbose=1,
-        class_weight = {0: 0.1, 1: 0.2, 2: 10000}
+        class_weight = {0: (1-(35193/51842)), 1: (1-(9221/51842)), 2: (1-(7428/51842))} #more weight on class 1 & 2
     )
 
     return model, history
@@ -68,15 +62,11 @@ def evaluate_model(
         y: np.ndarray,
         batch_size=64
     ):
-    """
-    Evaluate trained model performance on the dataset
-    """
-
     if model is None:
         print(f"\n❌ No model to evaluate")
         return None
 
-    test_loss, test_acc = model.evaluate(
+    test_loss, test_precision, test_acc = model.evaluate(
         x=X,
         y=y,
         batch_size=batch_size,
@@ -84,9 +74,10 @@ def evaluate_model(
         return_dict=True
     )
 
+    print(f"✅ Model evaluated, Precision: {round(test_precision, 2)}")
     print(f"✅ Model evaluated, Accuracy: {round(test_acc, 2)}")
 
-    return test_loss, test_acc
+    return test_loss, test_precision, test_acc
 
 # Making predictions fromt the model
 def model_predict(model,

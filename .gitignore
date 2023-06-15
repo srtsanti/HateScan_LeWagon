@@ -3,7 +3,6 @@
 .env.yaml
 .streamlit
 .python-version
-*.ipynb
 *.h5
 *.pickle
 *.csv

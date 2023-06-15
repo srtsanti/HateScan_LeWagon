@@ -24,15 +24,40 @@ def main_func():
         y_cat = to_categorical(y)
         X_train, X_test, y_train, y_test = train_test_split(X, y_cat, test_size=0.2, random_state=42)
 
+<<<<<<< HEAD
+#Tokenize X
+X_train_token, vocab_size = tokenizer(X_train)
+X_test_token, _ = tokenizer(X_test)
+=======
         #Tokenize X
         X_train_token, vocab_size_train = X_tokenizer(X_train)
+>>>>>>> b3876d81c9797f69d994fa038b7bde14edbc9471
 
         loaded_tokenizer = load_tokenizer()
         X_test_token = loaded_tokenizer.texts_to_sequences(X_test)
 
+<<<<<<< HEAD
+#define params
+embedding_dimension = 100
+
+#initiate model
+model = initialize_model(vocab_size, embedding_dimension)
+
+#compile model
+model = compile_model(model=model, learning_rate=0.01)
+
+#train model
+history, model = train_model(model=model,
+        X_train=X_train_pad,
+        y_train=y_train,
+        batch_size=32,
+        patience=2,
+        validation_split=0.2)
+=======
         #Pad X
         X_train_pad = pad_sequences(X_train_token, dtype='float32', padding='post')
         X_test_pad = pad_sequences(X_test_token, dtype='float32',padding='post')
+>>>>>>> b3876d81c9797f69d994fa038b7bde14edbc9471
 
 
         #define params
