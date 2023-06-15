@@ -1,0 +1,19 @@
+# web_main
+streamlit
+pandas
+google-cloud-bigquery==3.10.0
+
+# single scan
+numpy
+time
+requests
+
+# account scan
+plotly.graph_objects
+altair
+plotly.express
+
+# global scan
+matplotlib.pyplot
+seaborn
+sklearn.decomposition
