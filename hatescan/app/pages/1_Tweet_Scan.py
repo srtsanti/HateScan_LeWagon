@@ -76,21 +76,20 @@ def single_scan_page():
         }
 
     # Hate Scan Title
-    st.title('HateScan :mega: ')
-    st.write('Welcome to our Hate Speech recognition app')
+    st.title('TweetScan :mega: ')
+    st.write('Find out how hateful a tweet is')
 
     # Gap CSS
     st.markdown(spacing, unsafe_allow_html=True)
     st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
 
     # Tweet Box
-    st.subheader('Enter tweet to analyze:')
-    tweet = st.text_area("Tweet Box", max_chars=300)
+    st.subheader('Enter a tweet in English to analyze')
+    tweet = st.text_area("Input real tweets for optimal results", max_chars=300)
 
     # API conn
     url = st.secrets['key_ap']
     params = {'tweet' : tweet}
-    st.write(tweet)
     scanner = st.button('Scan tweet')
 
     # Gap CSS
@@ -110,7 +109,7 @@ def single_scan_page():
         if scale in scale_mapping:
             label, emoji = scale_mapping[scale]
             st.write("Hate Label Scale:", f"{label} {emoji}")
-            st.title("Hate Level:")
+            st.subheader("Hate Level:")
             st.select_slider("Your tweet is:",
                                     options=[0, 1, 2],
                                     value=scale,

@@ -34,7 +34,7 @@ def global_scan_page():
 
     # Hate Scan Title
     st.title('GlobalScan :mega:')
-    st.write('Analysis of All Twitter Accounts Scanned by HateScan')
+    st.write('Compare and anlyze all the Twitter Accounts Scanned by HateScan')
 
     # Gap CSS
     st.markdown(spacing, unsafe_allow_html=True)
@@ -115,78 +115,79 @@ def global_scan_page():
     )
     fig.update_traces(opacity=1, marker=dict(symbol='circle', sizemin=25), hovertemplate='<b>%{hovertext}</b><br>Hate Label: %{customdata[3]}<br>Followers: %{customdata[2]:,.0f}')
     fig.update_layout(coloraxis_colorbar=dict(title='Hate Label'), coloraxis_colorbar_len=1, coloraxis_colorbar_thickness=15)
-    st.title("Twitter User profile")
+    st.subheader("Twitter Profiles")
+    st.write("Each account is a circle in the graph. The size of the circles represents the number of followers of each profile. The color of the circles represents the hate label assigned by HateScan.")
     st.plotly_chart(fig)
 
     # Gap CSS
-    st.markdown(spacing, unsafe_allow_html=True)
-    st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
+    # st.markdown(spacing, unsafe_allow_html=True)
+    # st.markdown('<div class="gap"></div>', unsafe_allow_html=True)
 
-    # Create two columns
-    tab1, tab2 = st.columns(2)
+    # # Create two columns
+    # tab1, tab2 = st.tabs(2)
 
-    with tab1:
-        st.markdown("#### Hate Label Distribution")
-        data = {
-            'Hate Label': ['Hate', 'Offensive', 'Normal'],
-            'Value': [15, 20, 10]  # Update with the actual values
-        }
-        df = pd.DataFrame(data)
+    # with tab1:
+    #     st.markdown("#### Hate Label Distribution")
+    #     data = {
+    #         'Hate Label': ['Hate', 'Offensive', 'Normal'],
+    #         'Value': [15, 20, 10]  # Update with the actual values
+    #     }
+    #     df = pd.DataFrame(data)
 
-        # Define the custom color palette
-        custom_palette = alt.Scale(
-            domain=['Hate', 'Offensive', 'Normal'],
-            range=['#D7667A', '#E8E29C', '#179A8E']
-        )
+    #     # Define the custom color palette
+    #     custom_palette = alt.Scale(
+    #         domain=['Hate', 'Offensive', 'Normal'],
+    #         range=['#D7667A', '#E8E29C', '#179A8E']
+    #     )
 
-        # Sort the DataFrame by the predefined order
-        df = df.sort_values('Hate Label', key=lambda x: x.map({'Hate': 0, 'Offensive': 1, 'Normal': 2}))
+    #     # Sort the DataFrame by the predefined order
+    #     df = df.sort_values('Hate Label', key=lambda x: x.map({'Hate': 0, 'Offensive': 1, 'Normal': 2}))
 
-        # Create the stacked bar chart using Altair
-        chart = alt.Chart(df).mark_bar().encode(
-            x='Value:Q',
-            y=alt.Y('Hate Label:O', sort='-x'),
-            color=alt.Color('Hate Label:N', scale=custom_palette)
-        ).properties(
-            width=400,
-            height=200
-        )
+    #     # Create the stacked bar chart using Altair
+    #     chart = alt.Chart(df).mark_bar().encode(
+    #         x='Value:Q',
+    #         y=alt.Y('Hate Label:O', sort='-x'),
+    #         color=alt.Color('Hate Label:N', scale=custom_palette)
+    #     ).properties(
+    #         width=400,
+    #         height=200
+    #     )
 
-        # Display the chart using Streamlit
-        st.altair_chart(chart, use_container_width=True)
+    #     # Display the chart using Streamlit
+    #     st.altair_chart(chart, use_container_width=True)
 
-    with tab2:
-        st.markdown("#### Topic ID Distribution")
+    # with tab2:
+    #     st.markdown("#### Topic ID Distribution")
 
-        data = {
-            'Topic ID': ['Religion', 'Gender', 'Race', 'Politics', 'Sports'],
-            'Value': [15, 20, 10, 12, 18]  # Update with the actual values
-        }
-        df = pd.DataFrame(data)
+    #     data = {
+    #         'Topic ID': ['Religion', 'Gender', 'Race', 'Politics', 'Sports'],
+    #         'Value': [15, 20, 10, 12, 18]  # Update with the actual values
+    #     }
+    #     df = pd.DataFrame(data)
 
-        # Define the custom color palette
-        custom_palette = alt.Scale(
-            domain=['Religion', 'Gender', 'Race', 'Politics', 'Sports'],
-            range=['#D7667A', '#E8E29C', '#179A8E', '#7B3F61', '#3A6186']
-        )
+    #     # Define the custom color palette
+    #     custom_palette = alt.Scale(
+    #         domain=['Religion', 'Gender', 'Race', 'Politics', 'Sports'],
+    #         range=['#D7667A', '#E8E29C', '#179A8E', '#7B3F61', '#3A6186']
+    #     )
 
-        # Sort the DataFrame by the predefined order
-        df = df.sort_values('Topic ID', key=lambda x: x.map({
-            'Religion': 0, 'Gender': 1, 'Race': 2, 'Politics': 3, 'Sports': 4
-        }))
+    #     # Sort the DataFrame by the predefined order
+    #     df = df.sort_values('Topic ID', key=lambda x: x.map({
+    #         'Religion': 0, 'Gender': 1, 'Race': 2, 'Politics': 3, 'Sports': 4
+    #     }))
 
-        # Create the stacked bar chart using Altair
-        chart = alt.Chart(df).mark_bar().encode(
-            x='Value:Q',
-            y=alt.Y('Topic ID:O', sort='-x'),
-            color=alt.Color('Topic ID:N', scale=custom_palette)
-        ).properties(
-            width=400,
-            height=200
-        )
+    #     # Create the stacked bar chart using Altair
+    #     chart = alt.Chart(df).mark_bar().encode(
+    #         x='Value:Q',
+    #         y=alt.Y('Topic ID:O', sort='-x'),
+    #         color=alt.Color('Topic ID:N', scale=custom_palette)
+    #     ).properties(
+    #         width=400,
+    #         height=200
+    #     )
 
-        # Display the chart using Streamlit
-        st.altair_chart(chart, use_container_width=True)
+    #     # Display the chart using Streamlit
+    #     st.altair_chart(chart, use_container_width=True)
 
 
 global_scan_page()
