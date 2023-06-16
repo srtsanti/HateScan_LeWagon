@@ -1,3 +1,2 @@
 # HateScan
-#1237 data science project
-#Hi This is Santi
+# 1237 Data Science
