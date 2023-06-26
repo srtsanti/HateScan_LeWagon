@@ -3,7 +3,6 @@ import string
 from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
-from tensorflow.keras.preprocessing.text import text_to_word_sequence
 from gensim.models import Word2Vec
 from tensorflow.keras.preprocessing.text import Tokenizer
 import numpy as np
@@ -58,7 +57,7 @@ def tokenizer(X):
     tokenizer = Tokenizer()
     tokenizer.fit_on_texts(X)
     save_tokenizer(tokenizer)
-    vocab_size = len(tokenizer.word_index)
+    vocab_size = len(tokenizer.word_index) + 1
     X_token = tokenizer.texts_to_sequences(X)
     return X_token, vocab_size
 

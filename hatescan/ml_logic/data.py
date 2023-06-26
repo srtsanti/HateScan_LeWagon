@@ -1,9 +1,12 @@
 import pandas as pd
 
 
-def clean_data():
-    df = pd.read_csv('/Users/Corcho/code/srtsanti/HateScan/HateScan/data/twitter_data1000.csv')
-    
-    df['TweetText'].fillna('', inplace=True)
-    
+def load_clean_scaledata():
+    df = pd.read_csv('data/prepped/concat_df.csv')
+
+    return df
+
+def load_clean_topicdata():
+    df = pd.read_csv('data/prepped/twitter_davinci_ds.csv')
+
     return df
